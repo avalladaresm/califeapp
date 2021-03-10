@@ -10,6 +10,22 @@ const Header = (props) => {
   const queryClient = useQueryClient()
 
   const auth: LoggedInUser = useAuth(queryClient)
+  
+  const profileMenuOptions = [
+    {
+      title: 'My Profile',
+      route: '/admin/profile'
+    },
+    {
+      title: 'Settings',
+      route: '/admin/settings',
+    },
+    {
+      title: 'Logout',
+      route: '/auth/login',
+      type: 'logout'
+    }
+  ]
 
   return (
     <div className='fixed bg-white border-b border-gray-200 h-20 w-full z-100'>
@@ -37,7 +53,7 @@ const Header = (props) => {
         {
           auth?.a_t &&
           <div className='flex flex-row space-x-3 py-1 justify-center self-center'>
-            <ProfileMenu />
+            <ProfileMenu options={profileMenuOptions} />
           </div>
         }
       </div>

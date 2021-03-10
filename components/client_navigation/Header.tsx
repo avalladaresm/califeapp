@@ -43,6 +43,18 @@ const Header = (props) => {
     }
   ]
 
+  const profileMenuOptions = [
+    {
+      title: 'Dashbord',
+      route: '/client/dashboard'
+    },
+    {
+      title: 'Logout',
+      route: '/auth/login',
+      type: 'logout'
+    }
+  ]
+
   return (
     <div className='fixed bg-white border-b border-gray-200 h-20 w-full z-100'>
       <div className='flex align-middle justify-between h-full space-x-3 px-3'>
@@ -63,7 +75,7 @@ const Header = (props) => {
         {
           auth?.a_t &&
           <div className='flex flex-row space-x-3 py-1 justify-center self-center'>
-            <ProfileMenu />
+            <ProfileMenu options={profileMenuOptions} />
           </div>
         }
       </div>
