@@ -42,7 +42,7 @@ export const signup = async (values: AccountSignUp) => {
   }
 }
 
-export const FetchAccountRolesOnly = async (cookieData: LoggedInUser): Promise<LoggedInUser> => {
+export const FetchAccountRolesOnly = async (cookieData: LoggedInUser): Promise<string | LoggedInUser> => {
   try {
     const accountRole = await axios.get(`http://localhost:4000/auth/${cookieData.uid}/account-roles`, {
       headers: {

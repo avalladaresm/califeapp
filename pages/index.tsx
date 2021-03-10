@@ -1,7 +1,7 @@
 import React from 'react'
 import Navigation from '../components/admin_navigation'
 import { LoggedInUser } from './auth/AuthModel';
-import { useAuth } from '../pages/auth/AuthService';
+import { FetchAccountRolesOnly, useAuth } from '../pages/auth/AuthService';
 import { useQueryClient } from 'react-query';
 import Mayre from 'mayre'
 import { Context } from 'vm';
@@ -39,10 +39,20 @@ export const getServerSideProps = async (ctx: Context) => {
     }
   }
 
-  return {
-    redirect: {
-      destination: '/admin/dashboard',
-      permanent: false
+  const accountRoles = await FetchAccountRolesOnly(parsedCookie)
+  if (accountRoles === 'USER_ADMIN_ROOT') {
+    return {
+      redirect: {
+        destination: '/admin/dashboard',
+        permanent: false
+      }
+    }
+  } else if (accountRoles === 'USER_CLIENT') {
+    return {
+      redirect: {
+        destination: '/app',
+        permanent: false
+      }
     }
   }
 }
