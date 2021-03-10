@@ -9,7 +9,7 @@ import { ReactQueryDevtools } from 'react-query/devtools'
 import { FetchAccountRoles, useAuth } from './auth/AuthService';
 import { deleteSpecificCookies, documentCookieJsonify } from '../utils';
 import NProgress from 'nprogress'
-import { LoggedInUser } from './auth/AuthModel';
+import { LoggedInUserCookieData } from './auth/AuthModel';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,16 +21,16 @@ const queryClient = new QueryClient({
 })
 
 function MyApp({ Component, pageProps }) {
-  const [currentAuth, setCurrentAuth] = useState<LoggedInUser>(undefined)
+  const [currentAuth, setCurrentAuth] = useState<LoggedInUserCookieData>(undefined)
   const [resolved, setResolved] = useState<boolean>(false)
 
   const router = useRouter()
-  const auth: LoggedInUser = useAuth(queryClient)
+  const auth: LoggedInUserCookieData = useAuth(queryClient)
 
   useEffect(() => {
     currentAuth && (async () => {
       try {
-        const res: LoggedInUser = await FetchAccountRoles(queryClient, currentAuth)
+        const res: LoggedInUserCookieData = await FetchAccountRoles(queryClient, currentAuth)
         console.log('haww', res)
         if (res?.error) {
           router.push('/auth/login')
@@ -45,7 +45,7 @@ function MyApp({ Component, pageProps }) {
   }, [currentAuth])
 
   useEffect(() => {
-    const parsedCookie: LoggedInUser = documentCookieJsonify(document.cookie)
+    const parsedCookie: LoggedInUserCookieData = documentCookieJsonify(document.cookie)
     const isParsedCookieUnd = parsedCookie.uid === null || parsedCookie.a_t === '' ? false : true
     const authData = auth ?? parsedCookie
 
@@ -77,7 +77,7 @@ function MyApp({ Component, pageProps }) {
   }, [])
 
   useEffect(() => {
-    const parsedCookie: LoggedInUser = documentCookieJsonify(document.cookie)
+    const parsedCookie: LoggedInUserCookieData = documentCookieJsonify(document.cookie)
 
     if ((!parsedCookie.uid || !parsedCookie.a_t) && router.pathname !== '/auth/signup') router.push('/auth/login')
   }, [])

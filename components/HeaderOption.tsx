@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 import React from "react";
 import { HiChevronDown } from "react-icons/hi";
 import { useQueryClient } from "react-query";
-import { LoggedInUser } from "../pages/auth/AuthModel";
+import { LoggedInUserCookieData } from "../pages/auth/AuthModel";
 import { useAuth, useDoLogout } from "../pages/auth/AuthService";
 
 const HeaderOption = (props) => {
   const queryClient = useQueryClient()
   const router = useRouter()
 
-  const auth: LoggedInUser = useAuth(queryClient)
+  const auth: LoggedInUserCookieData = useAuth(queryClient)
 
   const onLogout = async () => {
     useDoLogout(queryClient, router, document.cookie)

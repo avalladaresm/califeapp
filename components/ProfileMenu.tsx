@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 import React from "react";
 import { HiChevronDown } from "react-icons/hi";
 import { useQueryClient } from "react-query";
-import { LoggedInUser } from "../pages/auth/AuthModel";
+import { LoggedInUserCookieData } from "../pages/auth/AuthModel";
 import { useAuth, useDoLogout } from "../pages/auth/AuthService";
 
 const ProfileMenu = (props) => {
   const queryClient = useQueryClient()
   const router = useRouter()
 
-  const auth: LoggedInUser = useAuth(queryClient)
+  const auth: LoggedInUserCookieData = useAuth(queryClient)
 
   const onLogout = async () => {
     useDoLogout(queryClient, router, document.cookie)
@@ -38,8 +38,17 @@ const ProfileMenu = (props) => {
               leaveTo='transform opacity-0 scale-95'
             >
               <Menu.Items
-                className='absolute right-0 w-56 mt-2 origin-top-right bg-gray-50 border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none'
+                className='absolute right-0 w-auto mt-2 origin-top-right bg-gray-50 border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none'
               >
+                <div className='flex flex-row px-4 py-3 space-x-2'>
+                  <div className='bg-indigo-700 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'>
+                    <div style={{ outline: 'none' }} className='h-10 w-10 border border-white rounded-full' />
+                  </div>
+                  <div className='flex flex-col self-center'>
+                    <p className='text-lg leading-5 whitespace-nowrap'>{props.customerName}</p>
+                    {props.userProfile === 2 && <p className='text-sm font-medium leading-5 text-gray-900 truncate'>Administrador</p>}
+                  </div>
+                </div>
                 {props.options.map((o, i) => {
                   return (
                     <div key={i} className='py-1'>
@@ -50,7 +59,7 @@ const ProfileMenu = (props) => {
                             className={`${active
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-700'
-                              } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left cursor-pointer`}
+                              } flex justify-between w-full px-4 py-2 text-md font-semibold leading-5 text-left cursor-pointer`}
                           >
                             {o.title}
                           </div>

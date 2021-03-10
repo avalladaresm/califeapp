@@ -1,8 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
-import { HiMenu } from 'react-icons/hi'
 import { useQueryClient } from 'react-query'
-import { LoggedInUser } from '../../pages/auth/AuthModel'
+import { LoggedInUserCookieData } from '../../pages/auth/AuthModel'
 import { useAuth } from '../../pages/auth/AuthService'
 import ProfileMenu from '../ProfileMenu'
 import HeaderOption from '../HeaderOption'
@@ -10,7 +9,7 @@ import HeaderOption from '../HeaderOption'
 const Header = (props) => {
   const queryClient = useQueryClient()
 
-  const auth: LoggedInUser = useAuth(queryClient)
+  const auth: LoggedInUserCookieData = useAuth(queryClient)
 
   const headerOptions = [
     {
@@ -75,7 +74,7 @@ const Header = (props) => {
         {
           auth?.a_t &&
           <div className='flex flex-row space-x-3 py-1 justify-center self-center'>
-            <ProfileMenu options={profileMenuOptions} />
+            <ProfileMenu options={profileMenuOptions} customerName={props.customerName} />
           </div>
         }
       </div>

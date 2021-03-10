@@ -15,7 +15,7 @@ export interface AccountSignUp {
   password: string
 }
 
-export interface LoggedInUser {
+export interface LoggedInUserCookieData {
   a_t: string
   r?: string[]
   uid: number

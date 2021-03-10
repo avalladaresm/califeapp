@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios"
 import { QueryClient, useMutation } from "react-query"
 import { cookieNames, deleteCookie } from "../../utils"
 import { AccountLogIn, AccountSignUp } from "./AuthModel"
-import { LoggedInUser } from "./AuthModel"
+import { LoggedInUserCookieData } from "./AuthModel"
 
 export const useDoLogin = (queryClient: QueryClient, router) => {
   return useMutation((values: AccountLogIn) => {
@@ -13,7 +13,7 @@ export const useDoLogin = (queryClient: QueryClient, router) => {
     })
   }, {
     onSuccess: (data, variables) => {
-      const loginRes: LoggedInUser = data.data
+      const loginRes: LoggedInUserCookieData = data.data
       const authData = { a_t: loginRes.a_t, r: loginRes.r, uid: loginRes.uid }
       setAuth(queryClient, authData)
       document.cookie = 'uid=' + authData.uid + ";path=/"
@@ -42,7 +42,7 @@ export const signup = async (values: AccountSignUp) => {
   }
 }
 
-export const FetchAccountRolesOnly = async (cookieData: LoggedInUser): Promise<string | LoggedInUser> => {
+export const FetchAccountRolesOnly = async (cookieData: LoggedInUserCookieData): Promise<string | LoggedInUserCookieData> => {
   try {
     const accountRole = await axios.get(`http://localhost:4000/auth/${cookieData.uid}/account-roles`, {
       headers: {
@@ -53,12 +53,12 @@ export const FetchAccountRolesOnly = async (cookieData: LoggedInUser): Promise<s
     return accountRole.data.roles
   }
   catch (e) {
-    const res: LoggedInUser = { ...cookieData, error: e }
+    const res: LoggedInUserCookieData = { ...cookieData, error: e }
     return res
   }
 }
 
-export const FetchAccountRoles = async (queryClient: QueryClient, cookieData: LoggedInUser): Promise<LoggedInUser> => {
+export const FetchAccountRoles = async (queryClient: QueryClient, cookieData: LoggedInUserCookieData): Promise<LoggedInUserCookieData> => {
   try {
     const accountRole = await axios.get(`http://localhost:4000/auth/${cookieData.uid}/account-roles`, {
       headers: {
@@ -70,7 +70,7 @@ export const FetchAccountRoles = async (queryClient: QueryClient, cookieData: Lo
     return accountRole.data.roles
   }
   catch (e) {
-    const res: LoggedInUser = { ...cookieData, error: e }
+    const res: LoggedInUserCookieData = { ...cookieData, error: e }
     return res
   }
 }
@@ -83,11 +83,11 @@ export const useDoLogout = (queryClient: QueryClient, router, cookie: string) =>
   })
 }
 
-export const setAuth = (queryClient: QueryClient, authData: LoggedInUser) => {
+export const setAuth = (queryClient: QueryClient, authData: LoggedInUserCookieData) => {
   queryClient.setQueryData('Auth', authData)
 }
 
 export const useAuth = (queryClient: QueryClient) => {
-  const res: LoggedInUser = queryClient.getQueryData('Auth')
+  const res: LoggedInUserCookieData = queryClient.getQueryData('Auth')
   return res
 }

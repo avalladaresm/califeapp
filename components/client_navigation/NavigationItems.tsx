@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useQueryClient } from 'react-query'
-import { LoggedInUser } from '../../pages/auth/AuthModel'
+import { LoggedInUserCookieData } from '../../pages/auth/AuthModel'
 import { useAuth } from '../../pages/auth/AuthService'
 import { isUserAuthorizedToViewThisPage } from '../../utils'
 import { NavigationItem } from './NavigationItem'
@@ -12,7 +12,7 @@ import { AiOutlineFundProjectionScreen } from 'react-icons/ai'
 export const NavigationItems = (props) => {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const auth: LoggedInUser = useAuth(queryClient)
+  const auth: LoggedInUserCookieData = useAuth(queryClient)
 
   const options = [
     {

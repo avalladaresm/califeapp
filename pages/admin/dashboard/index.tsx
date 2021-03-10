@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next"
 import MainContainer from "../../../components/admin_navigation"
 import { documentCookieJsonify } from "../../../utils"
-import { LoggedInUser } from "../../auth/AuthModel"
+import { LoggedInUserCookieData } from "../../auth/AuthModel"
 
 const Dashboard = () => {
   return (
@@ -12,7 +12,7 @@ const Dashboard = () => {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const parsedCookie: LoggedInUser = ctx.req.headers.cookie && documentCookieJsonify(ctx.req?.headers?.cookie)
+  const parsedCookie: LoggedInUserCookieData = ctx.req.headers.cookie && documentCookieJsonify(ctx.req?.headers?.cookie)
 
   if (!parsedCookie?.a_t) {
     return {

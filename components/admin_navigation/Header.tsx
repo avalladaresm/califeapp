@@ -2,14 +2,14 @@ import React from 'react'
 import Image from 'next/image'
 import { HiMenu, HiMenuAlt1 } from 'react-icons/hi'
 import { useQueryClient } from 'react-query'
-import { LoggedInUser } from '../../pages/auth/AuthModel'
+import { LoggedInUserCookieData } from '../../pages/auth/AuthModel'
 import { useAuth } from '../../pages/auth/AuthService'
 import ProfileMenu from '../ProfileMenu'
 
 const Header = (props) => {
   const queryClient = useQueryClient()
 
-  const auth: LoggedInUser = useAuth(queryClient)
+  const auth: LoggedInUserCookieData = useAuth(queryClient)
   
   const profileMenuOptions = [
     {

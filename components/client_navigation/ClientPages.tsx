@@ -1,7 +1,7 @@
 import { useRouter } from "next/router"
 import React from "react"
 
-const Client = () => {
+const Client = (props) => {
   const router = useRouter()
 
   const pages = [
@@ -44,8 +44,8 @@ const Client = () => {
     <div className='flex flex-col border border-gray-300 bg-white py-5 space-y-5 rounded-sm'>
       <div className='flex flex-col px-20 space-y-2 justify-center'>
         <div className='h-48 w-48 rounded-full bg-orange-400 self-center place-self-center' />
-        <div className='self-center place-self-center'>
-          Customer name
+        <div className='text-xl self-center place-self-center'>
+          {props.customerName}
         </div>
       </div>
       <div className=''>

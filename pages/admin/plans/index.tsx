@@ -3,7 +3,7 @@ import React from "react"
 import MainContainer from "../../../components/admin_navigation"
 import PageContent from "../../../components/PageContent"
 import { documentCookieJsonify } from "../../../utils"
-import { LoggedInUser } from "../../auth/AuthModel"
+import { LoggedInUserCookieData } from "../../auth/AuthModel"
 import { FetchAccountRolesOnly, useAuth } from "../../auth/AuthService"
 import { usePlansCustomers } from "./PlanService"
 
@@ -46,7 +46,7 @@ const Plans = (props) => {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const parsedCookie: LoggedInUser = ctx.req.headers.cookie && documentCookieJsonify(ctx.req?.headers?.cookie)
+  const parsedCookie: LoggedInUserCookieData = ctx.req.headers.cookie && documentCookieJsonify(ctx.req?.headers?.cookie)
   if (!parsedCookie?.a_t) {
     return {
       redirect: {
