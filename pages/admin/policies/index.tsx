@@ -1,5 +1,5 @@
 import React from "react"
-import MainContainer from "../../components/navigation"
+import MainContainer from "../../../components/admin_navigation"
 
 const Policies = () => {
   return (

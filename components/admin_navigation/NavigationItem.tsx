@@ -11,7 +11,7 @@ interface NavItemSettings {
   icon?: ReactElement
   collapsed?: boolean
 }
-
+console.log('navigationitem')
 export const NavigationItem: FC<NavItemSettings> = (props) => {
   return (
     <div>

@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 import { SignupCard } from '../../components/signupcard'
-import Navigation from '../../components/navigation'
+import Navigation from '../../components/admin_navigation'
 
 export default function Login() {
 

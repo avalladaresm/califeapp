@@ -17,89 +17,89 @@ export const NavigationItems = (props) => {
   const options = [
     {
       title: 'Dashboard',
-      route: '/dashboard',
-      activePage: router.pathname.startsWith('/dashboard'),
+      route: '/admin/dashboard',
+      activePage: router.pathname.startsWith('/admin/dashboard'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <MdDashboard size='1.5em' />
     },
     {
       title: 'Monedas',
-      route: '/currencies',
+      route: '/admin/currencies',
       actions:[],
-      activePage: router.pathname.startsWith('/employees'),
+      activePage: router.pathname.startsWith('/admin/currencies'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <FaUsers size='1.5em' />
     },
     {
       title: 'Países',
-      route: '/countries',
-      activePage: router.pathname.startsWith('/accounts'),
+      route: '/admin/countries',
+      activePage: router.pathname.startsWith('/admin/countries'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <MdAccountBox size='1.5em' />
     },
     {
       title: 'Compañías',
-      route: '/companies',
-      activePage: router.pathname.startsWith('/loginhistory'),
+      route: '/admin/companies',
+      activePage: router.pathname.startsWith('/admin/companies'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <MdHistory size='1.5em' />
     },
     {
       title: 'Planes',
-      route: '/plans',
-      activePage: router.pathname.startsWith('/activitylogs'),
+      route: '/admin/plans',
+      activePage: router.pathname.startsWith('/admin/plans'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <MdViewList size='1.5em' />
     },
     {
       title: 'Pólizas',
-      route: '/policies',
-      activePage: false,
+      route: '/admin/policies',
+      activePage: router.pathname.startsWith('/admin/policies'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <FaBoxes size='1.5em' />
     },
     {
       title: 'Redes de Servicio',
-      route: '/networkservices',
-      activePage: false,
+      route: '/admin/networkservices',
+      activePage: router.pathname.startsWith('/admin/networkservices'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <FaWarehouse size='1.5em' />
     },
     {
       title: 'Patologías',
-      route: '/pathologies',
-      activePage: false,
+      route: '/admin/pathologies',
+      activePage: router.pathname.startsWith('/admin/pathologies'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <AiOutlineFundProjectionScreen size='1.5em' />
     },
     {
       title: 'Zonas de Riesgo',
-      route: '/riskzones',
-      activePage: false,
+      route: '/admin/riskzones',
+      activePage: router.pathname.startsWith('/admin/riskzones'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <MdNotificationsActive size='1.5em' />
     },
     {
       title: 'Periodos de Espera',
-      route: '/waitingperiods',
-      activePage: false,
+      route: '/admin/waitingperiods',
+      activePage: router.pathname.startsWith('/admin/waitingperiods'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <MdComment size='1.5em' />
     },
     {
       title: 'Reportes',
-      route: '/reports',
-      activePage: false,
+      route: '/admin/reports',
+      activePage: router.pathname.startsWith('/admin/reports'),
       authorization: ['USER_ADMIN_ROOT'],
       canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
       icon: <MdComment size='1.5em' />

@@ -1,7 +1,5 @@
 import { FC, useState } from "react"
 import { LoginSettings } from '../logincard/LoginSettings'
-import Spin from "../Spin"
-import { TempLogo } from "../TempLogo"
 import { useDoLogin } from '../../pages/auth/AuthService'
 import { useRouter } from 'next/router'
 import { useQueryClient } from "react-query"
@@ -42,7 +40,7 @@ export const LoginCard: FC<LoginSettings> = () => {
           </div>
           {doLogin.isLoading ?
             <button disabled type='button' className='h-12 rounded-md bg-blueGray-400 text-md font-semibold disabled:opacity-75 text-coolGray-50 flex flex-row justify-center items-center cursor-wait'>
-              <Spin /> logging in...
+              logging in...
 						</button> :
             <button onClick={() => onLogin()} type='button' style={{ backgroundColor: '#09dca4' }} className='h-12 rounded-md flex flex-row justify-center items-center'>
               <div className='text-xl text-white font-semibold'>

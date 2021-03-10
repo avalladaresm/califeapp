@@ -1,0 +1,74 @@
+import { GetServerSidePropsContext } from "next"
+import React from "react"
+import MainContainer from "../../../components/admin_navigation"
+import PageContent from "../../../components/PageContent"
+import { documentCookieJsonify } from "../../../utils"
+import { LoggedInUser } from "../../auth/AuthModel"
+import { FetchAccountRolesOnly } from "../../auth/AuthService"
+import { useCompanies } from "./CompanyService"
+
+const Companies = (props) => {
+  const { data, isLoading } = useCompanies(props?.cookies?.a_t)
+
+  const handleButtonClick = (e, row) => {
+    console.log(e, row)
+  }
+  
+  const columns = [
+    {
+      id: 'name',
+      accessor: 'name',
+      Header: 'Name'
+    },
+    {
+      id: 'description',
+      accessor: 'description',
+      Header: 'Description'
+    },
+    {
+      id: 'edit',
+      Header: 'Acciones',
+      Cell: ({ cell }) => (
+        <div className='flex flex-row'>
+          <button onClick={(e) => handleButtonClick(e.type, cell.row)}>
+            Edit
+          </button>
+          <button value={cell.row.values.name} onClick={(e) => handleButtonClick(e.type, cell.row)}>
+            Disable
+          </button>
+        </div>
+      )
+    }
+  ]
+
+  return (
+    <MainContainer>
+      {data ? <PageContent title='Companies' data={data} columns={columns} isLoading={isLoading} /> : 'Loading...'}
+    </MainContainer>
+  )
+}
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const parsedCookie: LoggedInUser = ctx.req.headers.cookie && documentCookieJsonify(ctx.req?.headers?.cookie)
+  if (!parsedCookie?.a_t) {
+    return {
+      redirect: {
+        destination: '/auth/login',
+        permanent: false
+      }
+    }
+  }
+
+  const accountRoles = await FetchAccountRolesOnly(parsedCookie)
+  return {
+    props: {
+      cookies: {
+        uid: parsedCookie.uid,
+        a_t: parsedCookie.a_t,
+        r: accountRoles
+      }
+    }
+  }
+}
+
+export default Companies

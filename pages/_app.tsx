@@ -6,8 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useRouter } from 'next/router';
 import { ReactQueryDevtools } from 'react-query/devtools'
-import { FetchAccountRolesOnly, useAuth } from './auth/AuthService';
-//import { FetchAccountRole } from '../services/account';
+import { FetchAccountRoles, useAuth } from './auth/AuthService';
 import { deleteSpecificCookies, documentCookieJsonify } from '../utils';
 import NProgress from 'nprogress'
 import { LoggedInUser } from './auth/AuthModel';
@@ -31,7 +30,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     currentAuth && (async () => {
       try {
-        const res: LoggedInUser = await FetchAccountRolesOnly(queryClient, currentAuth)
+        const res: LoggedInUser = await FetchAccountRoles(queryClient, currentAuth)
         console.log('haww', res)
         if (res?.error) {
           router.push('/auth/login')
@@ -101,7 +100,7 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
-    if (!!auth?.uid && router.pathname === '/') router.push('/dashboard')
+    if (!!auth?.uid && router.pathname === '/') router.push('/')
   }, [auth?.uid])
 
   return (

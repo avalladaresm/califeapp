@@ -1,7 +1,5 @@
 import React, { FC } from 'react'
 import { LoginSettings } from '../logincard/LoginSettings'
-import Spin from '../Spin'
-import { TempLogo } from '../TempLogo'
 import { useRouter } from 'next/router'
 import { object, string, number } from 'yup'
 import { Field, Formik } from 'formik'
@@ -89,10 +87,10 @@ export const SignupCard: FC<LoginSettings> = () => {
                   className={`min-w-full ${(
                     values.firstname === initialValues.firstname && !touched.firstname
                   ) ? '' : (
-                      errors.firstname ?
-                        'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                        'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                    )} text-center shadow-sm rounded-sm h-8`}
+                    errors.firstname ?
+                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
+                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
+                  )} text-center shadow-sm rounded-sm h-8`}
                   style={{ outline: 'none' }}
                 />
               </div>
@@ -114,10 +112,10 @@ export const SignupCard: FC<LoginSettings> = () => {
                   className={`min-w-full ${(
                     values.surname === initialValues.surname && !touched.surname
                   ) ? '' : (
-                      errors.surname ?
-                        'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                        'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                    )} text-center shadow-sm rounded-sm h-8`}
+                    errors.surname ?
+                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
+                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
+                  )} text-center shadow-sm rounded-sm h-8`}
                   style={{ outline: 'none' }}
                 />
               </div>
@@ -139,10 +137,10 @@ export const SignupCard: FC<LoginSettings> = () => {
                   className={`min-w-full ${(
                     values.phoneNumber === initialValues.phoneNumber && !touched.phoneNumber
                   ) ? '' : (
-                      errors.phoneNumber ?
-                        'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                        'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                    )} text-center shadow-sm rounded-sm h-8`}
+                    errors.phoneNumber ?
+                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
+                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
+                  )} text-center shadow-sm rounded-sm h-8`}
                   style={{ outline: 'none' }}
                 />
               </div>
@@ -164,10 +162,10 @@ export const SignupCard: FC<LoginSettings> = () => {
                   className={`min-w-full ${(
                     values.dob === initialValues.dob && !touched.dob
                   ) ? '' : (
-                      errors.dob ?
-                        'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                        'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                    )} text-center shadow-sm rounded-sm h-8`}
+                    errors.dob ?
+                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
+                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
+                  )} text-center shadow-sm rounded-sm h-8`}
                   style={{ outline: 'none' }}
                 />
               </div>
@@ -196,10 +194,10 @@ export const SignupCard: FC<LoginSettings> = () => {
                       className={`min-w-full ${(
                         values.country === initialValues.country && !touched.country
                       ) ? '' : (
-                          errors.country ?
-                            'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                            'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                        )} text-center shadow-sm rounded-sm h-10`}
+                        errors.country ?
+                          'ring-2 ring-red-600 ring-inset ring-opacity-50' :
+                          'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
+                      )} text-center shadow-sm rounded-sm h-10`}
                       onBlur={() => setTouched({ ...touched, country: true })}
                     />
                   )}
@@ -223,10 +221,10 @@ export const SignupCard: FC<LoginSettings> = () => {
                   className={`min-w-full ${(
                     values.email === initialValues.email && !touched.email
                   ) ? '' : (
-                      errors.email ?
-                        'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                        'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                    )} text-center shadow-sm rounded-sm h-8`}
+                    errors.email ?
+                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
+                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
+                  )} text-center shadow-sm rounded-sm h-8`}
                   style={{ outline: 'none' }}
                 />
               </div>
@@ -248,10 +246,10 @@ export const SignupCard: FC<LoginSettings> = () => {
                   className={`min-w-full ${(
                     values.password === initialValues.password && !touched.password
                   ) ? '' : (
-                      errors.password ?
-                        'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                        'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                    )} text-center shadow-sm rounded-sm h-8`}
+                    errors.password ?
+                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
+                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
+                  )} text-center shadow-sm rounded-sm h-8`}
                   style={{ outline: 'none' }}
                 />
               </div>
@@ -259,7 +257,7 @@ export const SignupCard: FC<LoginSettings> = () => {
               <div className='flex flex-col self-center w-6/12 space-y-3 pt-3'>
                 {isSubmitting ?
                   <button disabled type='button' className='h-12 rounded-md bg-blueGray-400 text-md font-semibold disabled:opacity-75 text-coolGray-50 flex flex-row justify-center items-center cursor-wait'>
-                    <Spin /> procesando...
+                    procesando...
       						</button> :
                   <button type='submit' style={{ backgroundColor: '#09dca4' }} className='h-12 rounded-md flex flex-row justify-center items-center'>
                     <div className='text-xl text-white font-semibold'>

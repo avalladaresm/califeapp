@@ -18,7 +18,7 @@ export const useDoLogin = (queryClient: QueryClient, router) => {
       setAuth(queryClient, authData)
       document.cookie = 'uid=' + authData.uid + ";path=/"
       document.cookie = 'a_t=' + authData.a_t + ";path=/"
-      router.push('/dashboard')
+      router.push('/')
     }, onError: (error: AxiosError) => {
       console.log('erorrr', error.response.data)
     }
@@ -42,7 +42,23 @@ export const signup = async (values: AccountSignUp) => {
   }
 }
 
-export const FetchAccountRolesOnly = async (queryClient: QueryClient, cookieData: LoggedInUser): Promise<LoggedInUser> => {
+export const FetchAccountRolesOnly = async (cookieData: LoggedInUser): Promise<LoggedInUser> => {
+  try {
+    const accountRole = await axios.get(`http://localhost:4000/auth/${cookieData.uid}/account-roles`, {
+      headers: {
+        'Authorization': `Bearer ${cookieData.a_t}`
+      }
+    })
+    const authData = { ...cookieData, r: accountRole.data.roles }
+    return accountRole.data.roles
+  }
+  catch (e) {
+    const res: LoggedInUser = { ...cookieData, error: e }
+    return res
+  }
+}
+
+export const FetchAccountRoles = async (queryClient: QueryClient, cookieData: LoggedInUser): Promise<LoggedInUser> => {
   try {
     const accountRole = await axios.get(`http://localhost:4000/auth/${cookieData.uid}/account-roles`, {
       headers: {

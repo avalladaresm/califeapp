@@ -1,7 +1,7 @@
 import { LoginCard } from '../../components/logincard'
 import Image from 'next/image'
 import React from 'react'
-import Navigation from '../../components/navigation'
+import Navigation from '../../components/admin_navigation'
 
 export default function Login() {
 
