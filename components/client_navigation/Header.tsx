@@ -5,6 +5,9 @@ import { LoggedInUserCookieData } from '../../pages/auth/AuthModel'
 import { useAuth } from '../../pages/auth/AuthService'
 import ProfileMenu from '../ProfileMenu'
 import HeaderOption from '../HeaderOption'
+import { PlanTypes } from '../../models'
+
+const { PLAN_PLATA, PLAN_ORO, PLAN_PLATINUM } = PlanTypes
 
 const Header = (props) => {
   const queryClient = useQueryClient()
@@ -13,16 +16,19 @@ const Header = (props) => {
 
   const headerOptions = [
     {
-      title: 'Nuevo Plan',
+      title: 'Plan',
       subOptions: [
         {
-          title: 'Plan Plata'
+          title: 'Plan Plata',
+          planType: PLAN_PLATA
         },
         {
-          title: 'Plan Oro'
+          title: 'Plan Oro',
+          planType: PLAN_ORO
         },
         {
-          title: 'Plan Platinum'
+          title: 'Plan Platinum',
+          planType: PLAN_PLATINUM
         },
       ]
     },
@@ -64,7 +70,7 @@ const Header = (props) => {
           <div className='flex flex-row self-center space-x-10'>
             {headerOptions.map((ho, i) => {
               return (
-                <HeaderOption key={i} title={ho.title} subOptions={ho.subOptions}>
+                <HeaderOption key={i} title={ho.title} subOptions={ho.subOptions} >
                   {ho.title}
                 </HeaderOption>
               )

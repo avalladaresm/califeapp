@@ -1,20 +1,12 @@
 import { Menu, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useContext } from "react";
 import { HiChevronDown } from "react-icons/hi";
-import { useQueryClient } from "react-query";
-import { LoggedInUserCookieData } from "../pages/auth/AuthModel";
-import { useAuth, useDoLogout } from "../pages/auth/AuthService";
+import { SelectedPlanContext } from "../context/PlanContext";
 
 const HeaderOption = (props) => {
-  const queryClient = useQueryClient()
   const router = useRouter()
-
-  const auth: LoggedInUserCookieData = useAuth(queryClient)
-
-  const onLogout = async () => {
-    useDoLogout(queryClient, router, document.cookie)
-  }
+  const selectedPlan = useContext(SelectedPlanContext)
 
   return (
     <div className='relative inline-block'>
@@ -22,9 +14,9 @@ const HeaderOption = (props) => {
         {({ open }) => (
           <div>
             <span>
-              <Menu.Button style={{ outline: 'none' }} className='flex flex-row bg-blueGray-400 px-5 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white'>
+              <Menu.Button style={{ outline: 'none' }} className='flex flex-row text-lg focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white outline-none'>
                 <div style={{ outline: 'none' }} className='' >{props.title}</div>
-                <div className='self-center'><HiChevronDown size='1.5em' /></div>
+                <div className='self-center'><HiChevronDown size='1.2em' /></div>
               </Menu.Button>
             </span>
 
@@ -46,11 +38,11 @@ const HeaderOption = (props) => {
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            href=''
+                            onClick={() => { selectedPlan(so.planType), router.push('/client/plans/new') }}
                             className={`${active
                               ? 'bg-gray-100 text-gray-900'
                               : 'text-gray-700'
-                              } flex justify-between w-full px-4 py-2 text-sm leading-5 text-left`}
+                              } flex justify-between w-full px-4 py-2 text-md font-medium leading-5 text-left`}
                           >
                             {so.title}
                           </a>
