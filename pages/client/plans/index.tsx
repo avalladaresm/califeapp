@@ -2,19 +2,41 @@ import { GetServerSidePropsContext } from "next"
 import React from "react"
 import MainContainer from "../../../components/client_navigation"
 import ClientPages from "../../../components/client_navigation/ClientPages"
+import PageContent from "../../../components/PageContent"
 import { FetchUser, useUser } from "../../../services/User"
 import { documentCookieJsonify } from "../../../utils"
 import { LoggedInUserCookieData } from "../../auth/AuthModel"
+import { usePlans, usePlansCustomer } from "./PlansService"
 
 const Plans = (props) => {
-  const { data } = useUser(props?.cookies?.a_t, props?.loggedInUser?.idUser)
+  const user = useUser(props?.cookies?.a_t, props?.loggedInUser?.idUser)
+  const planCustomer = usePlansCustomer(props?.cookies?.a_t, props?.loggedInUser?.idUser)
+  const { } = usePlans(props?.cookies?.a_t)
+
+  const columns = [
+    {
+      id: 'planName',
+      accessor: 'planName',
+      Header: 'Plan'
+    },
+    {
+      id: 'status',
+      accessor: 'status',
+      Header: 'Status'
+    },
+    {
+      id: 'createdDate',
+      accessor: 'createdDate',
+      Header: 'Fecha de creación'
+    }
+  ]
 
   return (
-    <MainContainer customerName={data && data.name} userProfile={data && data.idUserProfile}>
+    <MainContainer customerName={user.data && user.data.name} userProfile={user.data && user.data.idUserProfile}>
       <div className='flex flex-row space-x-3'>
-        <ClientPages customerName={data && data.name} />
+        <ClientPages customerName={user.data && user.data.name} />
         <div className='w-full p-5 border border-gray-300 bg-white'>
-          Plans
+          {planCustomer?.data ? <PageContent title='Historial de planes' data={planCustomer?.data} columns={columns} isLoading={planCustomer.isLoading} /> : 'Loading...'}
         </div>
       </div>
     </MainContainer>
@@ -23,7 +45,6 @@ const Plans = (props) => {
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const parsedCookie: LoggedInUserCookieData = ctx.req.headers.cookie && documentCookieJsonify(ctx.req?.headers?.cookie)
-
   if (!parsedCookie?.a_t) {
     return {
       redirect: {

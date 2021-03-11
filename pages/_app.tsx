@@ -1,6 +1,7 @@
 import '../styles/index.css'
 import 'tailwindcss/tailwind.css';
 import 'nprogress/nprogress.css'
+import "react-datepicker/dist/react-datepicker.css";
 
 import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -10,6 +11,7 @@ import { FetchAccountRoles, useAuth } from './auth/AuthService';
 import { deleteSpecificCookies, documentCookieJsonify } from '../utils';
 import NProgress from 'nprogress'
 import { LoggedInUserCookieData } from './auth/AuthModel';
+import { PlanProvider } from '../context/PlanContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -105,8 +107,10 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
-      <ReactQueryDevtools initialIsOpen={false} />
+      <PlanProvider>
+        <Component {...pageProps} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </PlanProvider>
     </QueryClientProvider>
   )
 }

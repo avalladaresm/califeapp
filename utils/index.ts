@@ -1,7 +1,7 @@
-import { CurrentUserAuthData } from "../pages/auth/AuthModel";
+import { LoggedInUserCookieData } from "../pages/auth/AuthModel";
 
 export const documentCookieJsonify = (documentCookie: string) => {
-  let obj: CurrentUserAuthData = { u: '', a_t: '' };
+  let obj: LoggedInUserCookieData = { uid: null, a_t: '' };
   const cookies = documentCookie?.split(';')
   cookies.map(x => {
     const key = x.replace(/\s/g, "").split('=')[0]
