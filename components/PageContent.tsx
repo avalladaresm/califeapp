@@ -1,5 +1,6 @@
 import React from "react"
 import Button from "./Button"
+import NewCustomer from "./forms/NewCustomer"
 import Table from "./Table"
 
 const PageContent = (props) => {
@@ -33,6 +34,15 @@ const PageContent = (props) => {
               <div>
                 Cobertura: L. {props.planData?.coverage.toLocaleString('en-US')}
               </div>
+            </div>
+          </div>
+        </div>
+      }
+      {props.planData &&
+        <div className='flex w-full h-auto rounded-md border border-blueGray-300 bg-white'>
+          <div className='p-4 w-full h-auto'>
+            <div className='whitespace-nowrap'>
+              <NewCustomer />
             </div>
           </div>
         </div>
