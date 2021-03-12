@@ -29,10 +29,9 @@ export const signup = async (values: AccountSignUp) => {
   try {
     const signup = await axios.post(`http://localhost:4000/auth/signup`, {
       data: {
-        firstname: values.firstname, surname: values.surname,
-        phoneNumber: values.phoneNumber, dob: values.dob,
-        country: values.country, email: values.email,
-        password: values.password,
+        name: values.name, phone: values.phoneNumber,
+        birthDate: values.dob, country: values.country,
+        email: values.email, password: values.password,
       }
     })
 

@@ -6,8 +6,7 @@ export interface AccountLogIn {
 }
 
 export interface AccountSignUp {
-  firstname: string
-  surname: string
+  name: string
   phoneNumber: string
   dob: Date
   country: string

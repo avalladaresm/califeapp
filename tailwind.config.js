@@ -30,12 +30,20 @@ module.exports = {
       white: colors.white,
       black: colors.black
     },
-    extend: {},
+    extend: {
+      spacing: {
+        '112': '28rem',
+        '128': '32rem',
+        '144': '36rem',
+        '160': '40rem',
+        '176': '44rem',
+      }
+    },
   },
   variants: {
     extend: {
       backgroundColor: ['active'],
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 }

@@ -51,7 +51,7 @@ export const LoginCard: FC<LoginSettings> = () => {
         </div>
       </form>
       <div className='flex align-middle justify-center'>
-        ¿No posee una cuenta? <a onClick={() => router.push('/auth/signup')} style={{ color: '#09dca4' }} className='pl-1 hover:underline'>Registrese</a>
+        ¿No tienes una cuenta? <a onClick={() => router.push('/auth/signup')} style={{ color: '#09dca4' }} className='pl-1 hover:underline cursor-pointer'>Regístrate</a>
       </div>
     </div>
   )

@@ -2,6 +2,8 @@ import '../styles/index.css'
 import 'tailwindcss/tailwind.css';
 import 'nprogress/nprogress.css'
 import "react-datepicker/dist/react-datepicker.css";
+import 'react-phone-number-input/style.css'
+import 'react-notifications-component/dist/theme.css'
 
 import React, { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -12,6 +14,7 @@ import { deleteSpecificCookies, documentCookieJsonify } from '../utils';
 import NProgress from 'nprogress'
 import { LoggedInUserCookieData } from './auth/AuthModel';
 import { PlanProvider } from '../context/PlanContext';
+import ReactNotification from 'react-notifications-component'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -108,6 +111,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
       <PlanProvider>
+        <ReactNotification />
         <Component {...pageProps} />
         <ReactQueryDevtools initialIsOpen={false} />
       </PlanProvider>

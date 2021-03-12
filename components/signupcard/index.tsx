@@ -1,11 +1,15 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { LoginSettings } from '../logincard/LoginSettings'
 import { useRouter } from 'next/router'
-import { object, string, number } from 'yup'
+import { object, string, date } from 'yup'
 import { Field, Formik } from 'formik'
 import { FcCheckmark } from 'react-icons/fc'
 import { AccountSignUp } from '../../pages/auth/AuthModel'
 import { CountryDropdown } from 'react-country-region-selector'
+import PhoneInput from 'react-phone-number-input'
+import { subYears } from 'date-fns';
+import { store } from "react-notifications-component"
+import { signup } from '../../pages/auth/AuthService'
 
 interface OptionType {
   label: string
@@ -13,33 +17,32 @@ interface OptionType {
 }
 
 export const SignupCard: FC<LoginSettings> = () => {
+  const [_selectedDob, _setSelectedDob] = useState<Date>();
   const router = useRouter();
 
   const SignupSchema = object().shape({
     name: string()
-      .min(2, 'Too Short!')
-      .max(255, 'Too Long!')
-      .required('Required'),
-    surname: string()
-      .min(2, 'Too Short!')
-      .max(255, 'Too Long!')
-      .required('Required'),
-    username: string()
-      .min(2, 'Too Short!')
-      .max(25, 'Too Long!')
-      .required('Required'),
+      .min(2, 'Muy corto!')
+      .max(255, 'Muy largo!')
+      .required('Requerido!'),
+    phoneNumber: string()
+      .min(8, 'Muy corto!')
+      .max(25, 'Muy largo!')
+      .required('Requerido!'),
+    dob: date()
+      .max(subYears(new Date(), 18), 'Tienes que tener al menos 18 años de edad!')
+      .required('Requerido!'),
+    country: string()
+      .required('Requerido!'),
+    email: string().
+      email('Correo inválido').required('Requerido!'),
     password: string()
-      .min(8, '8 characters minimum')
-      .max(255, 'Woah! Will you remember that???')
-      .required('Required'),
-    email: string().email('Invalid email').required('Required'),
-    accountTypeId: number()
-      .required('Required')
+      .min(8, 'Contraseña muy corta!')
+      .required('Requerido!')
   });
 
   const initialValues: AccountSignUp = {
-    firstname: '',
-    surname: '',
+    name: '',
     phoneNumber: '',
     dob: new Date(),
     country: '',
@@ -48,7 +51,7 @@ export const SignupCard: FC<LoginSettings> = () => {
   }
 
   return (
-    <div style={{ height: '42rem', backgroundColor: '#fff' }} className='w-96 place-self-center rounded-sm border border-blueGray-200 px-7 py-7 space-y-3'>
+    <div className='w-112 h-auto place-self-center rounded-sm bg-white border border-blueGray-200 px-7 py-7 space-y-3'>
       <div className='flex flex-col space-y-3'>
         <p className='font-sans font-semibold text-xl'>
           Registro
@@ -57,129 +60,96 @@ export const SignupCard: FC<LoginSettings> = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={SignupSchema}
-        onSubmit={async (values, { resetForm }) => {
+        onSubmit={async (values) => {
           try {
-            resetForm()
-            console.log('exito', values)
+            const res = await signup(values)
+            if (res.status === 200) {
+              store.addNotification({
+                message: 'Registro exitoso! Ahora puedes ingresar a tu cuenta.',
+                type: 'success',
+                insert: 'bottom',
+                container: 'top-center',
+                animationIn: ['animate__animated', 'animate__fadeIn'],
+                animationOut: ['animate__animated', 'animate__fadeOut'],
+                dismiss: { duration: 5000 }
+              });
+            }
+            router.push('/auth/login')
           }
           catch (e) {
-            console.log('error', e)
+            store.addNotification({
+              message: `Registro fallido! ${e.response.data.message}`,
+              type: 'danger',
+              insert: 'bottom',
+              container: 'top-center',
+              animationIn: ['animate__animated', 'animate__fadeIn'],
+              animationOut: ['animate__animated', 'animate__fadeOut'],
+              dismiss: { duration: 5000 }
+            });
           }
         }}
       >
         {({ errors, touched, initialValues, values, handleSubmit, isSubmitting, setFieldValue, setTouched }) => (
           <form onSubmit={handleSubmit}>
-            <div className='flex flex-col space-y-2 '>
+            <div className='flex flex-col space-y-5 '>
               <div className='flex flex-col self-center w-full'>
                 <div className='flex flex-row space-x-2'>
-                  <label htmlFor='name'><span className='text-red-600'>*</span>Name</label>
-                  {(values.firstname === initialValues.firstname && !touched.firstname) ?
-                    null :
-                    (errors.firstname ? (
-                      <div className='text-red-600'>{errors.firstname}</div>
-                    ) :
-                      <FcCheckmark />)
-                  }
+                  <label htmlFor='name'><span className='text-red-500'>*</span>Nombre</label>
+                  {(values.name === initialValues.name && !touched.name) ? null : (errors.name ? (<div className='text-red-500'>{errors.name}</div>) : <FcCheckmark />)}
                 </div>
                 <Field
-                  name='firstname'
-                  placeholder={!touched.firstname ? 'Pedro' : ''}
-                  className={`min-w-full ${(
-                    values.firstname === initialValues.firstname && !touched.firstname
-                  ) ? '' : (
-                    errors.firstname ?
-                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                  )} text-center shadow-sm rounded-sm h-8`}
+                  name='name' type='text'
+                  placeholder={!touched.name ? 'Pedro Pascal' : ''}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.name === initialValues.name && !touched.name) ? '' : (errors.name && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                   style={{ outline: 'none' }}
                 />
               </div>
 
               <div className='flex flex-col self-center w-full'>
                 <div className='flex flex-row space-x-2'>
-                  <label htmlFor='surname'><span className='text-red-600'>*</span>Surname</label>
-                  {(values.surname === initialValues.surname && !touched.surname) ?
-                    null :
-                    (errors.surname ? (
-                      <div className='text-red-600'>{errors.surname}</div>
-                    ) :
-                      <FcCheckmark />)
-                  }
+                  <label htmlFor='phoneNumber'><span className='text-red-500'>*</span>Número de teléfono</label>
+                  {(values.phoneNumber === initialValues.phoneNumber && !touched.phoneNumber) ? null : (errors.phoneNumber ? (<div className='text-red-500'>{errors.phoneNumber}</div>) : <FcCheckmark />)}
                 </div>
                 <Field
-                  name='surname'
-                  placeholder={!touched.surname ? 'Ramirez' : ''}
-                  className={`min-w-full ${(
-                    values.surname === initialValues.surname && !touched.surname
-                  ) ? '' : (
-                    errors.surname ?
-                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                  )} text-center shadow-sm rounded-sm h-8`}
+                  name='phoneNumber' type='tel'
+                  className={`PhoneInputInput w-full p-2 rounded-sm h-10 ${(values.phoneNumber === initialValues.phoneNumber && !touched.phoneNumber) ? '' : (errors.phoneNumber && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                   style={{ outline: 'none' }}
+                  children={({ field }) => (
+                    <PhoneInput
+                      {...field}
+                      placeholder='9900-0000'
+                      value={values.phoneNumber}
+                      onChange={(v) => {
+                        setFieldValue(field.name, v)
+                      }}
+                      defaultCountry='HN'
+                    />
+                  )}
                 />
               </div>
 
               <div className='flex flex-col self-center w-full'>
                 <div className='flex flex-row space-x-2'>
-                  <label htmlFor='phoneNumber'><span className='text-red-600'>*</span>Phone number</label>
-                  {(values.phoneNumber === initialValues.phoneNumber && !touched.phoneNumber) ?
-                    null :
-                    (errors.phoneNumber ? (
-                      <div className='text-red-600'>{errors.phoneNumber}</div>
-                    ) :
-                      <FcCheckmark />)
-                  }
+                  <label htmlFor='dob'><span className='text-red-500'>*</span>Fecha de nacimiento</label>
+                  {(values.dob === initialValues.dob && !touched.dob) ? null : (errors.dob ? (<div className='text-red-500'>{errors.dob}</div>) : <FcCheckmark />)}
                 </div>
                 <Field
-                  name='phoneNumber'
-                  placeholder={!touched.phoneNumber ? '98302037' : ''}
-                  className={`min-w-full ${(
-                    values.phoneNumber === initialValues.phoneNumber && !touched.phoneNumber
-                  ) ? '' : (
-                    errors.phoneNumber ?
-                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                  )} text-center shadow-sm rounded-sm h-8`}
-                  style={{ outline: 'none' }}
-                />
-              </div>
-
-              <div className='flex flex-col self-center w-full'>
-                <div className='flex flex-row space-x-2'>
-                  <label htmlFor='dob'><span className='text-red-600'>*</span>Date of birth</label>
-                  {(values.dob === initialValues.dob && !touched.dob) ?
-                    null :
-                    (errors.dob ? (
-                      <div className='text-red-600'>{errors.dob}</div>
-                    ) :
-                      <FcCheckmark />)
-                  }
-                </div>
-                <Field
-                  name='dob'
+                  name='dob' type='date'
                   placeholder={!touched.dob ? 'Ramirez' : ''}
-                  className={`min-w-full ${(
-                    values.dob === initialValues.dob && !touched.dob
-                  ) ? '' : (
-                    errors.dob ?
-                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                  )} text-center shadow-sm rounded-sm h-8`}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.dob === initialValues.dob && !touched.dob) ? '' : (errors.dob && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                   style={{ outline: 'none' }}
+                  onChange={(e) => {
+                    setFieldValue('dob', e.target.value)
+                    _setSelectedDob(e.target.value)
+                  }}
+                  value={_selectedDob}
                 />
               </div>
 
               <div className='flex flex-col self-center w-full'>
                 <div className='flex flex-row space-x-2'>
-                  <label htmlFor='country'><span className='text-red-600'>*</span>Country</label>
-                  {(values.country === initialValues.country && !touched.country) ?
-                    null :
-                    (errors.country ? (
-                      <div className='text-red-600'>{errors.country}</div>
-                    ) :
-                      <FcCheckmark />)
-                  }
+                  <label htmlFor='country'><span className='text-red-500'>*</span>País</label>
+                  {(values.country === initialValues.country && !touched.country) ? null : (errors.country ? (<div className='text-red-500'>{errors.country}</div>) : <FcCheckmark />)}
                 </div>
                 <Field
                   name='country'
@@ -191,14 +161,9 @@ export const SignupCard: FC<LoginSettings> = () => {
                         setFieldValue(field.name, v);
                       }}
                       priorityOptions={['HN', 'US']}
-                      className={`min-w-full ${(
-                        values.country === initialValues.country && !touched.country
-                      ) ? '' : (
-                        errors.country ?
-                          'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                          'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                      )} text-center shadow-sm rounded-sm h-10`}
+                      className={`w-full p-2 rounded-sm h-10 ${(values.country === initialValues.country && !touched.country) ? '' : (errors.country && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                       onBlur={() => setTouched({ ...touched, country: true })}
+                      defaultOptionLabel='Selecciona un país'
                     />
                   )}
                 />
@@ -206,50 +171,26 @@ export const SignupCard: FC<LoginSettings> = () => {
 
               <div className='flex flex-col self-center w-full'>
                 <div className='flex flex-row space-x-2'>
-                  <label htmlFor='email'><span className='text-red-600'>*</span>Email</label>
-                  {(values.email === initialValues.email && !touched.email) ?
-                    null :
-                    (errors.email ? (
-                      <div className='text-red-600'>{errors.email}</div>
-                    ) :
-                      <FcCheckmark />)
-                  }
+                  <label htmlFor='email'><span className='text-red-500'>*</span>Correo electrónico</label>
+                  {(values.email === initialValues.email && !touched.email) ? null : (errors.email ? (<div className='text-red-500'>{errors.email}</div>) : <FcCheckmark />)}
                 </div>
                 <Field
-                  name='email'
+                  name='email' type='email'
                   placeholder={!touched.email ? 'pramirez_01@gmail.com' : ''}
-                  className={`min-w-full ${(
-                    values.email === initialValues.email && !touched.email
-                  ) ? '' : (
-                    errors.email ?
-                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                  )} text-center shadow-sm rounded-sm h-8`}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.email === initialValues.email && !touched.email) ? '' : (errors.email && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                   style={{ outline: 'none' }}
                 />
               </div>
 
               <div className='flex flex-col self-center w-full'>
                 <div className='flex flex-row space-x-2'>
-                  <label htmlFor='password'><span className='text-red-600'>*</span>Password</label>
-                  {(values.password === initialValues.password && !touched.password) ?
-                    null :
-                    (errors.password ? (
-                      <div className='text-red-600'>{errors.password}</div>
-                    ) :
-                      <FcCheckmark />)
-                  }
+                  <label htmlFor='password'><span className='text-red-500'>*</span>Contraseña</label>
+                  {(values.password === initialValues.password && !touched.password) ? null : (errors.password ? (<div className='text-red-500'>{errors.password}</div>) : <FcCheckmark />)}
                 </div>
                 <Field
                   name='password' type='password'
-                  placeholder={!touched.password ? '************' : ''}
-                  className={`min-w-full ${(
-                    values.password === initialValues.password && !touched.password
-                  ) ? '' : (
-                    errors.password ?
-                      'ring-2 ring-red-600 ring-inset ring-opacity-50' :
-                      'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500'
-                  )} text-center shadow-sm rounded-sm h-8`}
+                  placeholder={!touched.password ? '********' : ''}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.password === initialValues.password && !touched.password) ? null : (errors.password && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                   style={{ outline: 'none' }}
                 />
               </div>
@@ -266,15 +207,13 @@ export const SignupCard: FC<LoginSettings> = () => {
                   </button>
                 }
               </div>
-
-
             </div>
           </form>
         )}
 
       </Formik>
       <div className='flex align-middle justify-center'>
-        Already have an account? <a onClick={() => router.push('/auth/login')} className='pl-1 text-blue-800 hover:text-blue-800 hover:underline'>Login</a>
+        ¿Ya tienes una cuenta? <a onClick={() => router.push('/auth/login')} style={{ color: '#09dca4' }} className='pl-1 hover:underline cursor-pointer'>Inicia sesión</a>
       </div>
     </div>
   )
