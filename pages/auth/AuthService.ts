@@ -3,6 +3,7 @@ import { QueryClient, useMutation } from "react-query"
 import { cookieNames, deleteCookie } from "../../utils"
 import { AccountLogIn, AccountSignUp } from "./AuthModel"
 import { LoggedInUserCookieData } from "./AuthModel"
+import { store } from "react-notifications-component"
 
 export const useDoLogin = (queryClient: QueryClient, router) => {
   return useMutation((values: AccountLogIn) => {
@@ -18,9 +19,26 @@ export const useDoLogin = (queryClient: QueryClient, router) => {
       setAuth(queryClient, authData)
       document.cookie = 'uid=' + authData.uid + ";path=/"
       document.cookie = 'a_t=' + authData.a_t + ";path=/"
+      store.addNotification({
+        message: `¡Inicio de sesión exitoso!`,
+        type: 'success',
+        insert: 'bottom',
+        container: 'top-center',
+        animationIn: ['animate__animated', 'animate__fadeIn'],
+        animationOut: ['animate__animated', 'animate__fadeOut'],
+        dismiss: { duration: 5000 }
+      });
       router.push('/')
     }, onError: (error: AxiosError) => {
-      console.log('erorrr', error.response.data)
+      store.addNotification({
+        message: `¡Inicio de sesión fallido! ${error.response.data === 'InternalServerError' ? 'Inténtalo de nuevo más tarde.' : error.response.data.message}`,
+        type: 'danger',
+        insert: 'bottom',
+        container: 'top-center',
+        animationIn: ['animate__animated', 'animate__fadeIn'],
+        animationOut: ['animate__animated', 'animate__fadeOut'],
+        dismiss: { duration: 5000 }
+      });
     }
   })
 }

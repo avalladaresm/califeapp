@@ -17,7 +17,7 @@ export const LoginCard: FC<LoginSettings> = () => {
   }
 
   return (
-    <div style={{ height: '24rem', backgroundColor: '#fff' }} className='place-self-center rounded-sm w-96 border border-blueGray-200 px-7 py-7 space-y-3'>
+    <div className='w-112 h-auto place-self-center rounded-sm bg-white border border-blueGray-200 px-7 py-7 space-y-3'>
       <div className='flex flex-col space-y-3'>
         <p className='font-sans font-semibold text-xl'>
           Iniciar sesión en C.A+Life
