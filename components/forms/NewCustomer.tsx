@@ -9,6 +9,9 @@ import Select from 'react-select'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 import { format, subDays, subYears } from 'date-fns'
+import HolderHealthQuestionnaire from './HolderHealthQuestionnaire';
+import DependantHealthQuestionnaire from './DependantHealthQuestionnaire';
+import PeopleAged50Exams from './PeopleAged50Exams';
 
 interface NewCustomer {
   firstname: string,
@@ -178,7 +181,14 @@ const NewEmployee = (props) => {
     identificationDocumentType: '',
 
     phoneNumber: '',
-    phoneNumberType: ''
+    phoneNumberType: '',
+
+    beneficiaryFullName: '',
+    beneficiaryKin: '',
+    beneficiaryIdentificationDocument: '',
+    beneficiaryPercentage: null,
+
+
   }
 
   return (
@@ -235,6 +245,7 @@ const NewEmployee = (props) => {
                     Save
                         </button>}
               </div>
+
               {/* General info */}
               <div className='w-11/12 justify-self-center self-center mb-5' >
                 <p className='font-semibold text-2xl'>Datos Personales</p>
@@ -609,6 +620,85 @@ const NewEmployee = (props) => {
                     style={{ outline: 'none' }}
                   />
                 </div>
+              </div>
+
+              {/* Beneficiarios */}
+              <div className='w-11/12 justify-self-center self-center mb-5' >
+                <p className='font-semibold text-2xl'>Beneficiarios</p>
+              </div>
+              <div className='flex flex-wrap mx-2 justify-evenly self-center'>
+                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-96'>
+                  <div className='flex flex-row space-x-2'>
+                    <label htmlFor='beneficiaryFullName'><span className='text-red-600'>*</span>Nombre Completo</label>
+                    {(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? null : (errors.beneficiaryFullName ? (<div className='text-red-600'>{errors.beneficiaryFullName}</div>) : <FcCheckmark />)}
+                  </div>
+                  <Field
+                    name='beneficiaryFullName'
+                    placeholder={!touched.beneficiaryFullName ? 'Pedro' : ''}
+                    className={`min-w-full ${(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? '' : (errors.beneficiaryFullName ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+                    style={{ outline: 'none' }}
+                  />
+                </div>
+                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
+                  <div className='flex flex-row space-x-2'>
+                    <label htmlFor='beneficiaryKin'><span className='text-red-600'>*</span>Parentesco</label>
+                    {(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? null : (errors.beneficiaryKin ? (<div className='text-red-600'>{errors.beneficiaryKin}</div>) : <FcCheckmark />)}
+                  </div>
+                  <Field
+                    name='beneficiaryKin'
+                    placeholder={!touched.beneficiaryKin ? 'Ramirez' : ''}
+                    className={`min-w-full ${(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? '' : (errors.beneficiaryKin ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+                    style={{ outline: 'none' }}
+                  />
+                </div>
+                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
+                  <div className='flex flex-row space-x-2'>
+                    <label htmlFor='beneficiaryIdentificationDocument'><span className='text-red-600'>*</span>Documento de Identificación</label>
+                    {(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? null : (errors.beneficiaryIdentificationDocument ? (<div className='text-red-600'>{errors.beneficiaryIdentificationDocument}</div>) : <FcCheckmark />)}
+                  </div>
+                  <Field
+                    name='beneficiaryIdentificationDocument'
+                    placeholder={!touched.beneficiaryIdentificationDocument ? 'Ramirez' : ''}
+                    className={`min-w-full ${(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? '' : (errors.beneficiaryIdentificationDocument ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+                    style={{ outline: 'none' }}
+                  />
+                </div>
+                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-28 border-orange-500'>
+                  <div className='flex flex-row space-x-2'>
+                    <label htmlFor='beneficiaryPercentage'><span className='text-red-600'>*</span>Porcentaje</label>
+                    {(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? null : (errors.beneficiaryPercentage ? (<div className='text-red-600'>{errors.beneficiaryPercentage}</div>) : <FcCheckmark />)}
+                  </div>
+                  <Field
+                    name='beneficiaryPercentage'
+                    placeholder={!touched.beneficiaryPercentage ? 'Ramirez' : ''}
+                    className={`min-w-full ${(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? '' : (errors.beneficiaryPercentage ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+                    style={{ outline: 'none' }}
+                  />
+                </div>
+              </div>
+
+              {/* Questionario de salud titular */}
+              <div className='w-11/12 justify-self-center self-center mb-5' >
+                <p className='font-semibold text-2xl'>Questionario de Salud del Titular</p>
+              </div>
+              <div className='flex flex-wrap mx-2 justify-evenly self-center'>
+                <HolderHealthQuestionnaire />
+              </div>
+
+              {/* Questionario de salud titular */}
+              <div className='w-11/12 justify-self-center self-center mb-5' >
+                <p className='font-semibold text-2xl'>Questionario de Salud del Dependiente</p>
+              </div>
+              <div className='flex flex-wrap mx-2 justify-evenly self-center'>
+                <DependantHealthQuestionnaire />
+              </div>
+
+              {/* Examenes Personas Mayores de 50 Años */}
+              <div className='w-11/12 justify-self-center self-center mb-5' >
+                <p className='font-semibold text-2xl'>Examenes Personas Mayores de 50 Años</p>
+              </div>
+              <div className='flex flex-wrap mx-2 justify-start'>
+                <PeopleAged50Exams />
               </div>
             </div>
           </div>
