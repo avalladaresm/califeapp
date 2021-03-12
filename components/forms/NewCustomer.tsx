@@ -388,7 +388,7 @@ const NewEmployee = (props) => {
                         showYearDropdown
                         dropdownMode='select'
                         todayButton="Today"
-                        placeholderText={'Fecha de nacimiento del titlar'}
+                        placeholderText={'Fecha de nacimiento del titular'}
                         onBlur={() => setTouched({ ...touched, birthDate: true })}
                       />
                     )}

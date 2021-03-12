@@ -1,6 +1,8 @@
 import React from "react"
 import Button from "./Button"
 import NewCustomer from "./forms/NewCustomer"
+import Cotizador from "./forms/Quote"
+import PlanDescription from "./PlanDescription"
 import Table from "./Table"
 
 const PageContent = (props) => {
@@ -25,18 +27,11 @@ const PageContent = (props) => {
       }
       {
         props.planDescription &&
-        <div className='flex w-full h-auto rounded-md border border-blueGray-300 bg-white'>
-          <div className='p-4 w-full h-auto'>
-            <div className='whitespace-nowrap'>
-              <div className='w-full border-b border-gray-300 text-xl font-medium'>
-                {props.planData?.name}
-              </div>
-              <div>
-                Cobertura: L. {props.planData?.coverage.toLocaleString('en-US')}
-              </div>
-            </div>
-          </div>
-        </div>
+        <PlanDescription planDescription={props.planData} />
+      }
+      {
+        props.planDescription &&
+        <Cotizador />
       }
       {props.planData &&
         <div className='flex w-full h-auto rounded-md border border-blueGray-300 bg-white'>
