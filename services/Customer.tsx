@@ -30,8 +30,9 @@ export const createCustomer = async (accessToken: string, values: any) => {
         country: values.country,
         identificationDocument: values.identificationDocument,
         identificationDocumentType: values.identificationDocumentType,
-        phoneNumber: values.phoneNumber,
-        phoneNumberType: values.phoneNumberType
+        cellphoneNumber: values.cellphoneNumber,
+        telephoneNumber: values.telephoneNumber,
+        faxNumber: values.faxNumber
       }
     }, {
       headers: {

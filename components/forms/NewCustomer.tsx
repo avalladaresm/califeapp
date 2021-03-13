@@ -45,8 +45,9 @@ interface NewCustomer {
   identificationDocument: string,
   identificationDocumentType: string,
 
-  number: string,
-  phoneNumberType: string
+  cellphoneNumber: string,
+  telephoneNumber: string,
+  faxNumber: string,
 }
 
 export interface OptionType {
@@ -83,7 +84,12 @@ const NewCustomer = () => {
     addressType: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
     city: string().required('Requerido!'),
     state: string().required('Requerido!'),
-    country: string().required('Requerido!')
+    country: string().required('Requerido!'),
+    identificationDocument: string().min(6, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    identificationDocumentType: string().min(6, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    cellphoneNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!').required('Requerido!'),
+    telephoneNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!').required('Requerido!'),
+    faxNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!')
   });
 
   const initialValues = {
@@ -116,8 +122,9 @@ const NewCustomer = () => {
     identificationDocument: '',
     identificationDocumentType: '',
 
-    phoneNumber: '',
-    phoneNumberType: '',
+    cellphoneNumber: '',
+    telephoneNumber: '',
+    faxNumber: ''
 
     /*beneficiaryFullName: '',
    beneficiaryKin: '',
@@ -216,6 +223,8 @@ const NewCustomer = () => {
                 initialValues={initialValues}
                 touched={touched}
                 errors={errors}
+                setFieldValue={setFieldValue}
+                setTouched={setTouched}
               />
               <Contact
                 values={values}
@@ -651,7 +660,7 @@ const Address = ({ values, initialValues, touched, errors, setFieldValue, setTou
   )
 }
 
-const IdentificationDocument = ({ values, initialValues, touched, errors }) => {
+const IdentificationDocument = ({ values, initialValues, touched, errors, setFieldValue, setTouched }) => {
   return (
     <div>
       <div className='w-11/12 justify-self-center self-center mb-5'>
@@ -665,7 +674,7 @@ const IdentificationDocument = ({ values, initialValues, touched, errors }) => {
           </div>
           <Field
             name='identificationDocument'
-            placeholder={!touched.identificationDocument ? 'Pedro' : ''}
+            placeholder={!touched.identificationDocument ? '0501983484839' : '0501983484839'}
             className={`min-w-full ${(values.identificationDocument === initialValues.identificationDocument && !touched.identificationDocument) ? '' : (errors.identificationDocument ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
           />
@@ -675,11 +684,22 @@ const IdentificationDocument = ({ values, initialValues, touched, errors }) => {
             <label htmlFor='identificationDocumentType'><span className='text-red-500'>*</span>Tipo de Documento de Identificación</label>
             {(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? null : (errors.identificationDocumentType ? (<div className='text-red-500'>{errors.identificationDocumentType}</div>) : <FcCheckmark />)}
           </div>
-          <Field
-            name='identificationDocumentType'
-            placeholder={!touched.identificationDocumentType ? 'Pedro' : ''}
+          <Field name='identificationDocumentType'
             className={`min-w-full ${(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? '' : (errors.identificationDocumentType ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
+            children={({ field }) => (
+              <select name='identificationDocumentType' id='identificationDocumentType'
+                className={`min-w-full ${(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? '' : (errors.identificationDocumentType ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} text-center shadow-sm rounded-sm h-10 border border-gray-300`}
+                onChange={v => {
+                  setFieldValue(field.name, v.target.value);
+                }}
+                onBlur={() => setTouched({ ...touched, identificationDocumentType: true })}
+              >
+                <option value=''>Seleccione el tipo de ID</option>
+                <option value='Cédula de Identidad'>Cédula de Identidad</option>
+                <option value='Pasaporte'>Pasaporte</option>
+              </select>
+            )}
           />
         </div>
       </div>
@@ -696,25 +716,37 @@ const Contact = ({ values, initialValues, touched, errors }) => {
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='phoneNumber'><span className='text-red-500'>*</span>Número de teléfono</label>
-            {(values.phoneNumber === initialValues.phoneNumber && !touched.phoneNumber) ? null : (errors.phoneNumber ? (<div className='text-red-500'>{errors.phoneNumber}</div>) : <FcCheckmark />)}
+            <label htmlFor='cellphoneNumber'><span className='text-red-500'>*</span>Número de celular</label>
+            {(values.cellphoneNumber === initialValues.cellphoneNumber && !touched.cellphoneNumber) ? null : (errors.cellphoneNumber ? (<div className='text-red-500'>{errors.cellphoneNumber}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='phoneNumber'
-            placeholder={!touched.phoneNumber ? 'Pedro' : ''}
-            className={`min-w-full ${(values.phoneNumber === initialValues.phoneNumber && !touched.phoneNumber) ? '' : (errors.phoneNumber ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            name='cellphoneNumber' type='tel'
+            placeholder={!touched.cellphoneNumber ? '98190572' : ''}
+            className={`min-w-full ${(values.cellphoneNumber === initialValues.cellphoneNumber && !touched.cellphoneNumber) ? '' : (errors.cellphoneNumber ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
           />
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='phoneNumberType'><span className='text-red-500'>*</span>Tipo de número de teléfono</label>
-            {(values.phoneNumberType === initialValues.phoneNumberType && !touched.phoneNumberType) ? null : (errors.phoneNumberType ? (<div className='text-red-500'>{errors.phoneNumberType}</div>) : <FcCheckmark />)}
+            <label htmlFor='telephoneNumber'><span className='text-red-500'>*</span>Teléfono de casa</label>
+            {(values.telephoneNumber === initialValues.telephoneNumber && !touched.telephoneNumber) ? null : (errors.telephoneNumber ? (<div className='text-red-500'>{errors.telephoneNumber}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='phoneNumberType'
-            placeholder={!touched.phoneNumberType ? 'Pedro' : ''}
-            className={`min-w-full ${(values.phoneNumberType === initialValues.phoneNumberType && !touched.phoneNumberType) ? '' : (errors.phoneNumberType ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            name='telephoneNumber' type='tel'
+            placeholder={!touched.telephoneNumber ? '25029039' : ''}
+            className={`min-w-full ${(values.telephoneNumber === initialValues.telephoneNumber && !touched.telephoneNumber) ? '' : (errors.telephoneNumber ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            style={{ outline: 'none' }}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2'>
+            <label htmlFor='faxNumber'>Número de fax</label>
+            {(values.faxNumber === initialValues.faxNumber && !touched.faxNumber) ? null : (errors.faxNumber ? (<div className='text-red-500'>{errors.faxNumber}</div>) : values.faxNumber?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='faxNumber' type='tel'
+            placeholder={!touched.faxNumber ? '22903902' : ''}
+            className={`min-w-full ${(values.faxNumber === initialValues.faxNumber && !touched.faxNumber) ? '' : (errors.faxNumber ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
           />
         </div>
