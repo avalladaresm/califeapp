@@ -173,33 +173,12 @@ const NewCustomer = () => {
       {({ errors, touched, initialValues, values, resetForm, setFieldValue, setTouched, handleSubmit, isSubmitting }) => (
         <Form onSubmit={handleSubmit}>
           <div className='flex flex-col w-full h-auto rounded-md border border-blueGray-300 bg-white'>
-            <div className='flex flex-col p-4 max-w-7xl xl:w-4/5 lg:w-11/12 w-full justify-self-center self-center'>
-              {/* Action buttons */}
-              <div className='flex justify-end rounded-b space-x-2 mb-3'>
-                <button
-                  className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-coolGray-500 hover:bg-coolGray-600 active:bg-coolGray-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner'
-                  type='button'
-                  style={{ transition: 'all .15s ease', outline: 'none' }}
-                  onClick={() => resetForm(initialValues as Partial<FormikState<NewCustomer>>)}
-                >
-                  Reset
-                </button>
-
-                {isSubmitting ?
-                  <button
-                    className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-lightBlue-500 hover:bg-lightBlue-600 active:bg-lightBlue-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner'
-                    type='submit'
-                    style={{ transition: 'all .15s ease', outline: 'none' }}
-                  >
-                    Creating employee account...
-                        </button> :
-                  <button
-                    className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-lightBlue-500 hover:bg-lightBlue-600 active:bg-lightBlue-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner'
-                    type='submit'
-                  >
-                    Save
-                        </button>}
-              </div>
+            <div className='flex flex-col p-4 max-w-7xl xl:w-4/5 lg:w-11/12 w-full justify-self-center self-center space-y-10'>
+              <ActionButtons
+                initialValues={initialValues}
+                isSubmitting={isSubmitting}
+                resetForm={resetForm}
+              />
               <GeneralInfo
                 values={values}
                 initialValues={initialValues}
@@ -239,50 +218,50 @@ const NewCustomer = () => {
               </div>
               <div className='flex flex-wrap mx-2 justify-evenly self-center'>
                 <div className='flex-grow ml-2 mb-2 2xl:w-64 w-96'>
-                  <div className='flex flex-row space-x-2'>
+                  <div className='flex flex-row space-x-2 font-medium'>
                     <label htmlFor='beneficiaryFullName'><span className='text-red-500'>*</span>Nombre Completo</label>
                     {(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? null : (errors.beneficiaryFullName ? (<div className='text-red-500'>{errors.beneficiaryFullName}</div>) : <FcCheckmark />)}
                   </div>
                   <Field
                     name='beneficiaryFullName'
                     placeholder={!touched.beneficiaryFullName ? 'Pedro' : ''}
-                    className={`min-w-full ${(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? '' : (errors.beneficiaryFullName ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+                    className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? '' : (errors.beneficiaryFullName && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                     style={{ outline: 'none' }}
                   />
                 </div>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
-                  <div className='flex flex-row space-x-2'>
+                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
+                  <div className='flex flex-row space-x-2 font-medium'>
                     <label htmlFor='beneficiaryKin'><span className='text-red-500'>*</span>Parentesco</label>
                     {(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? null : (errors.beneficiaryKin ? (<div className='text-red-500'>{errors.beneficiaryKin}</div>) : <FcCheckmark />)}
                   </div>
                   <Field
                     name='beneficiaryKin'
                     placeholder={!touched.beneficiaryKin ? 'Ramirez' : ''}
-                    className={`min-w-full ${(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? '' : (errors.beneficiaryKin ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+                    className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? '' : (errors.beneficiaryKin && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                     style={{ outline: 'none' }}
                   />
                 </div>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
-                  <div className='flex flex-row space-x-2'>
+                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
+                  <div className='flex flex-row space-x-2 font-medium'>
                     <label htmlFor='beneficiaryIdentificationDocument'><span className='text-red-500'>*</span>Documento de Identificación</label>
                     {(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? null : (errors.beneficiaryIdentificationDocument ? (<div className='text-red-500'>{errors.beneficiaryIdentificationDocument}</div>) : <FcCheckmark />)}
                   </div>
                   <Field
                     name='beneficiaryIdentificationDocument'
                     placeholder={!touched.beneficiaryIdentificationDocument ? 'Ramirez' : ''}
-                    className={`min-w-full ${(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? '' : (errors.beneficiaryIdentificationDocument ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+                    className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? '' : (errors.beneficiaryIdentificationDocument && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                     style={{ outline: 'none' }}
                   />
                 </div>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-28 border-orange-500'>
-                  <div className='flex flex-row space-x-2'>
+                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-28'>
+                  <div className='flex flex-row space-x-2 font-medium'>
                     <label htmlFor='beneficiaryPercentage'><span className='text-red-500'>*</span>Porcentaje</label>
                     {(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? null : (errors.beneficiaryPercentage ? (<div className='text-red-500'>{errors.beneficiaryPercentage}</div>) : <FcCheckmark />)}
                   </div>
                   <Field
                     name='beneficiaryPercentage'
                     placeholder={!touched.beneficiaryPercentage ? 'Ramirez' : ''}
-                    className={`min-w-full ${(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? '' : (errors.beneficiaryPercentage ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+                    className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? '' : (errors.beneficiaryPercentage && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                     style={{ outline: 'none' }}
                   />
                 </div>
@@ -322,97 +301,127 @@ export default NewCustomer
   <PeopleAged50Exams />
 </div> */}
 
+const ActionButtons = ({ initialValues, isSubmitting, resetForm }) => {
+  return (
+    <div className='flex justify-end rounded-b space-x-2 mb-3'>
+      <button
+        className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-coolGray-500 hover:bg-coolGray-600 active:bg-coolGray-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner'
+        type='button'
+        style={{ transition: 'all .15s ease', outline: 'none' }}
+        onClick={() => resetForm(initialValues as Partial<FormikState<NewCustomer>>)}
+      >
+        Limpiar
+      </button>
+
+      {isSubmitting ?
+        <button
+          className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-lightBlue-500 hover:bg-lightBlue-600 active:bg-lightBlue-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner'
+          type='submit'
+          style={{ transition: 'all .15s ease', outline: 'none' }}
+        >
+          Guardando datos...
+                        </button> :
+        <button
+          className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-lightBlue-500 hover:bg-lightBlue-600 active:bg-lightBlue-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner'
+          type='submit'
+        >
+          Guardar
+        </button>}
+    </div>
+  )
+}
+
 
 const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setSelectedDob, setFieldValue, setTouched }) => {
   return (
     <div>
-      <div className='w-11/12 justify-self-center self-center mb-5' >
+      <div className='w-11/12 justify-self-center self-center mb-2' >
         <p className='font-semibold text-2xl'>Datos Personales</p>
       </div>
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='firstname'><span className='text-red-500'>*</span>Primer nombre</label>
             {(values.firstname === initialValues.firstname && !touched.firstname) ? null : (errors.firstname ? (<div className='text-red-500'>{errors.firstname}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='firstname'
+            name='firstname' type='text'
             placeholder={!touched.firstname ? 'Pedro' : ''}
-            className={`min-w-full ${(values.firstname === initialValues.firstname && !touched.firstname) ? '' : (errors.firstname ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.firstname === initialValues.firstname && !touched.firstname) ? '' : (errors.firstname && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='middlename'><span className='text-red-500'>*</span>Segundo nombre</label>
             {(values.middlename === initialValues.middlename && !touched.middlename) ? null : (errors.middlename ? (<div className='text-red-500'>{errors.middlename}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='middlename'
+            name='middlename' type='text'
             placeholder={!touched.middlename ? 'Alberto' : ''}
-            className={`min-w-full ${(values.middlename === initialValues.middlename && !touched.middlename) ? '' : (errors.middlename ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.middlename === initialValues.middlename && !touched.middlename) ? '' : (errors.middlename && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='firstSurname'><span className='text-red-500'>*</span>Primer apellido</label>
             {(values.firstSurname === initialValues.firstSurname && !touched.firstSurname) ? null : (errors.firstSurname ? (<div className='text-red-500'>{errors.firstSurname}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='firstSurname'
+            name='firstSurname' type='text'
             placeholder={!touched.firstSurname ? 'Pascal' : ''}
-            className={`min-w-full ${(values.firstSurname === initialValues.firstSurname && !touched.firstSurname) ? '' : (errors.firstSurname ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.firstSurname === initialValues.firstSurname && !touched.firstSurname) ? '' : (errors.firstSurname && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='secondSurname'><span className='text-red-500'>*</span>Segundo apellido</label>
             {(values.secondSurname === initialValues.secondSurname && !touched.secondSurname) ? null : (errors.secondSurname ? (<div className='text-red-500'>{errors.secondSurname}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='secondSurname'
+            name='secondSurname' type='text'
             placeholder={!touched.secondSurname ? 'Figueroa' : ''}
-            className={`min-w-full ${(values.secondSurname === initialValues.secondSurname && !touched.secondSurname) ? '' : (errors.secondSurname ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.secondSurname === initialValues.secondSurname && !touched.secondSurname) ? '' : (errors.secondSurname && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='surnameAfterMarried'>Apellido de casada</label>
             {(values.surnameAfterMarried === initialValues.surnameAfterMarried && !touched.surnameAfterMarried) ? null : (errors.surnameAfterMarried ? (<div className='text-red-500'>{errors.surnameAfterMarried}</div>) : values.surnameAfterMarried?.length > 0 && <FcCheckmark />)}
           </div>
           <Field
-            name='surnameAfterMarried'
+            name='surnameAfterMarried' type='text'
             placeholder={!touched.surnameAfterMarried ? 'López' : ''}
-            className={`min-w-full ${(values.surnameAfterMarried === initialValues.surnameAfterMarried && !touched.surnameAfterMarried) ? '' : (errors.surnameAfterMarried ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.surnameAfterMarried === initialValues.surnameAfterMarried && !touched.surnameAfterMarried) ? '' : (errors.surnameAfterMarried && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='email'>Email</label>
             {(values.email === initialValues.email && !touched.email) ? null : (errors.email ? (<div className='text-red-500'>{errors.email}</div>) : values.email?.length > 0 && <FcCheckmark />)}
           </div>
           <Field
-            name='email'
+            name='email' type='email'
             placeholder={!touched.email ? 'pedro@gmail.com' : ''}
-            className={`min-w-full ${(values.email === initialValues.email && !touched.email) ? '' : (errors.email ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.email === initialValues.email && !touched.email) ? '' : (errors.email && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='gender'><span className='text-red-500'>*</span>Sexo</label>
             {(values.gender === initialValues.gender && !touched.gender) ? null : (errors.gender ? (<div className='text-red-500'>{errors.gender}</div>) : <FcCheckmark />)}
           </div>
           <Field name='gender'
-            className={`min-w-full ${(values.gender === initialValues.gender && !touched.gender) ? '' : (errors.gender ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.gender === initialValues.gender && !touched.gender) ? '' : (errors.gender && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
             children={({ field }) => (
               <select name='gender' id='gender'
-                className={`min-w-full ${(values.gender === initialValues.gender && !touched.gender) ? '' : (errors.gender ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} text-center shadow-sm rounded-sm h-10 border border-gray-300`}
+                className={`min-w-full rounded-sm h-10 ${(values.gender === initialValues.gender && !touched.gender) ? '' : (errors.gender && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                 onChange={v => {
                   setFieldValue(field.name, v.target.value);
                 }}
@@ -425,18 +434,18 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
             )}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='maritalStatus'><span className='text-red-500'>*</span>Estado Civil</label>
             {(values.maritalStatus === initialValues.maritalStatus && !touched.maritalStatus) ? null : (errors.maritalStatus ? (<div className='text-red-500'>{errors.maritalStatus}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='maritalStatus'
-            className={`min-w-full ${(values.maritalStatus === initialValues.maritalStatus && !touched.maritalStatus) ? '' : (errors.maritalStatus ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.maritalStatus === initialValues.maritalStatus && !touched.maritalStatus) ? '' : (errors.maritalStatus && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
             children={({ field }) => (
               <select name='maritalStatus' id='maritalStatus'
-                className={`min-w-full ${(values.maritalStatus === initialValues.maritalStatus && !touched.maritalStatus) ? '' : (errors.maritalStatus ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} text-center shadow-sm rounded-sm h-10 border border-gray-300`}
+                className={`min-w-full rounded-sm h-10 ${(values.maritalStatus === initialValues.maritalStatus && !touched.maritalStatus) ? '' : (errors.maritalStatus && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                 onChange={v => {
                   setFieldValue(field.name, v.target.value);
                 }}
@@ -450,25 +459,25 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
             )}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='occupation'><span className='text-red-500'>*</span>Ocupación</label>
             {(values.occupation === initialValues.occupation && !touched.occupation) ? null : (errors.occupation ? (<div className='text-red-500'>{errors.occupation}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='occupation'
+            name='occupation' type='text'
             placeholder={!touched.occupation ? 'Ingeniero' : ''}
-            className={`min-w-full ${(values.occupation === initialValues.occupation && !touched.occupation) ? '' : (errors.occupation ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.occupation === initialValues.occupation && !touched.occupation) ? '' : (errors.occupation && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='birthDate'><span className='text-red-500'>*</span>Fecha de Nacimiento</label>
             {(values.birthDate === initialValues.birthDate && !touched.birthDate) ? null : (errors.birthDate ? (<div className='text-red-500'>{errors.birthDate}</div>) : <FcCheckmark />)}
           </div>
           <Field name='birthDate' type='date'
-            className={`min-w-full flex-grow 2xl:w-64 w-64 shadow-sm rounded-sm h-10 px-3 border border-gray-300 ${(values.birthDate === initialValues.birthDate && !touched.birthDate) ? '' : (errors.birthDate && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            className={`min-w-full rounded-sm h-10 p-2 ${(values.birthDate === initialValues.birthDate && !touched.birthDate) ? '' : (errors.birthDate && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             onChange={(e) => {
               setFieldValue('birthDate', (date && format(e.target.value, 'P')) ?? '');
               setSelectedDob(e.target.value)
@@ -477,51 +486,51 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
             onBlur={() => setTouched({ ...touched, birthDate: true })}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='weight'><span className='text-red-500'>*</span>Peso (en lb)</label>
             {(values.weight === initialValues.weight && !touched.weight) ? null : (errors.weight ? (<div className='text-red-500'>{errors.weight}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='weight'
+            name='weight' type='number'
             placeholder={!touched.weight ? 'Ingeniero' : ''}
-            className={`min-w-full ${(values.weight === initialValues.weight && !touched.weight) ? '' : (errors.weight ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.weight === initialValues.weight && !touched.weight) ? '' : (errors.weight && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='height'><span className='text-red-500'>*</span>Estatura (en m)</label>
             {(values.height === initialValues.height && !touched.height) ? null : (errors.height ? (<div className='text-red-500'>{errors.height}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='height'
+            name='height' type='number'
             placeholder={!touched.height ? 'Ingeniero' : ''}
-            className={`min-w-full ${(values.height === initialValues.height && !touched.height) ? '' : (errors.height ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.height === initialValues.height && !touched.height) ? '' : (errors.height && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='worksAt'><span className='text-red-500'>*</span>Lugar de Trabajo</label>
             {(values.worksAt === initialValues.worksAt && !touched.worksAt) ? null : (errors.worksAt ? (<div className='text-red-500'>{errors.worksAt}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='worksAt'
+            name='worksAt' type='text'
             placeholder={!touched.worksAt ? 'Eterna S.A.' : ''}
-            className={`min-w-full ${(values.worksAt === initialValues.worksAt && !touched.worksAt) ? '' : (errors.worksAt ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.worksAt === initialValues.worksAt && !touched.worksAt) ? '' : (errors.worksAt && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='workAddress'><span className='text-red-500'>*</span>Dirección de Trabajo</label>
             {(values.workAddress === initialValues.workAddress && !touched.workAddress) ? null : (errors.workAddress ? (<div className='text-red-500'>{errors.workAddress}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='workAddress'
+            name='workAddress' type='text'
             placeholder={!touched.workAddress ? 'San Pedro Sula' : ''}
-            className={`min-w-full ${(values.workAddress === initialValues.workAddress && !touched.workAddress) ? '' : (errors.workAddress ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.workAddress === initialValues.workAddress && !touched.workAddress) ? '' : (errors.workAddress && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
@@ -534,73 +543,73 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
 const Address = ({ values, initialValues, touched, errors, setFieldValue, setTouched }) => {
   return (
     <div>
-      <div className='w-11/12 justify-self-center self-center mb-5'>
+      <div className='w-11/12 justify-self-center self-center mb-2'>
         <p className='font-semibold text-2xl'>Barrio o Colonia</p>
       </div>
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
         <div className='flex flex-wrap w-full justify-evenly align-middle'>
-          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
-            <div className='flex flex-row space-x-2'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
               <label htmlFor='neighborhood'><span className='text-red-500'>*</span>Colonia o Barrio</label>
               {(values.neighborhood === initialValues.neighborhood && !touched.neighborhood) ? null : (errors.neighborhood ? (<div className='text-red-500'>{errors.neighborhood}</div>) : <FcCheckmark />)}
             </div>
             <Field
-              name='neighborhood'
+              name='neighborhood' type='text'
               placeholder={!touched.neighborhood ? 'Colonia Las Flores' : ''}
-              className={`min-w-full ${(values.neighborhood === initialValues.neighborhood && !touched.neighborhood) ? '' : (errors.neighborhood ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+              className={`min-w-full p-2 rounded-sm h-10 ${(values.neighborhood === initialValues.neighborhood && !touched.neighborhood) ? '' : (errors.neighborhood && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
               style={{ outline: 'none' }}
             />
           </div>
-          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
-            <div className='flex flex-row space-x-2'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
               <label htmlFor='street'><span className='text-red-500'>*</span>Calle</label>
               {(values.street === initialValues.street && !touched.street) ? null : (errors.street ? (<div className='text-red-500'>{errors.street}</div>) : <FcCheckmark />)}
             </div>
             <Field
-              name='street'
+              name='street' type='text'
               placeholder={!touched.street ? 'Pedro' : ''}
-              className={`min-w-full ${(values.street === initialValues.street && !touched.street) ? '' : (errors.street ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+              className={`min-w-full p-2 rounded-sm h-10 ${(values.street === initialValues.street && !touched.street) ? '' : (errors.street && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
               style={{ outline: 'none' }}
             />
           </div>
-          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
-            <div className='flex flex-row space-x-2'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
               <label htmlFor='avenue'><span className='text-red-500'>*</span>Avenida</label>
               {(values.avenue === initialValues.avenue && !touched.avenue) ? null : (errors.avenue ? (<div className='text-red-500'>{errors.avenue}</div>) : <FcCheckmark />)}
             </div>
             <Field
-              name='avenue'
+              name='avenue' type='text'
               placeholder={!touched.avenue ? 'Pedro' : ''}
-              className={`min-w-full ${(values.avenue === initialValues.avenue && !touched.avenue) ? '' : (errors.avenue ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+              className={`min-w-full p-2 rounded-sm h-10 ${(values.avenue === initialValues.avenue && !touched.avenue) ? '' : (errors.avenue && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
               style={{ outline: 'none' }}
             />
           </div>
-          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
-            <div className='flex flex-row space-x-2'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
               <label htmlFor='block'>Bloque</label>
             </div>
             <Field
-              name='block'
+              name='block' type='text'
               placeholder={!touched.block ? 'Pedro' : ''}
-              className={`min-w-full p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+              className={`min-w-full p-2 rounded-sm h-10`}
               style={{ outline: 'none' }}
             />
           </div>
-          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
-            <div className='flex flex-row space-x-2'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
               <label htmlFor='houseNumber'>No. de Casa</label>
             </div>
             <Field
-              name='houseNumber'
+              name='houseNumber' type='text'
               placeholder={!touched.houseNumber ? 'Pedro' : ''}
-              className={`min-w-full p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+              className={`min-w-full p-2 rounded-sm h-10`}
               style={{ outline: 'none' }}
             />
           </div>
         </div>
         <div className='flex flex-wrap w-full justify-evenly align-middle'>
-          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
-            <div className='flex flex-row space-x-2'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
               <label htmlFor='country'><span className='text-red-500'>*</span>País</label>
             </div>
             <Field
@@ -617,8 +626,8 @@ const Address = ({ values, initialValues, touched, errors, setFieldValue, setTou
               )}
             />
           </div>
-          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
-            <div className='flex flex-row space-x-2'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
               <label htmlFor='state'><span className='text-red-500'>*</span>Departamento</label>
             </div>
             <Field
@@ -635,8 +644,8 @@ const Address = ({ values, initialValues, touched, errors, setFieldValue, setTou
               )}
             />
           </div>
-          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
-            <div className='flex flex-row space-x-2'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
               <label htmlFor='city'><span className='text-red-500'>*</span>Municipio</label>
             </div>
             <Field
@@ -663,33 +672,33 @@ const Address = ({ values, initialValues, touched, errors, setFieldValue, setTou
 const IdentificationDocument = ({ values, initialValues, touched, errors, setFieldValue, setTouched }) => {
   return (
     <div>
-      <div className='w-11/12 justify-self-center self-center mb-5'>
+      <div className='w-11/12 justify-self-center self-center mb-2'>
         <p className='font-semibold text-2xl'>Identificación</p>
       </div>
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='identificationDocument'><span className='text-red-500'>*</span>Documento de Identificación</label>
             {(values.identificationDocument === initialValues.identificationDocument && !touched.identificationDocument) ? null : (errors.identificationDocument ? (<div className='text-red-500'>{errors.identificationDocument}</div>) : <FcCheckmark />)}
           </div>
           <Field
-            name='identificationDocument'
+            name='identificationDocument' type='text'
             placeholder={!touched.identificationDocument ? '0501983484839' : '0501983484839'}
-            className={`min-w-full ${(values.identificationDocument === initialValues.identificationDocument && !touched.identificationDocument) ? '' : (errors.identificationDocument ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.identificationDocument === initialValues.identificationDocument && !touched.identificationDocument) ? '' : (errors.identificationDocument && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='identificationDocumentType'><span className='text-red-500'>*</span>Tipo de Documento de Identificación</label>
             {(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? null : (errors.identificationDocumentType ? (<div className='text-red-500'>{errors.identificationDocumentType}</div>) : <FcCheckmark />)}
           </div>
           <Field name='identificationDocumentType'
-            className={`min-w-full ${(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? '' : (errors.identificationDocumentType ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? '' : (errors.identificationDocumentType && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
             children={({ field }) => (
               <select name='identificationDocumentType' id='identificationDocumentType'
-                className={`min-w-full ${(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? '' : (errors.identificationDocumentType ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} text-center shadow-sm rounded-sm h-10 border border-gray-300`}
+                className={`min-w-full rounded-sm h-10 ${(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? '' : (errors.identificationDocumentType && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                 onChange={v => {
                   setFieldValue(field.name, v.target.value);
                 }}
@@ -710,43 +719,43 @@ const IdentificationDocument = ({ values, initialValues, touched, errors, setFie
 const Contact = ({ values, initialValues, touched, errors }) => {
   return (
     <div>
-      <div className='w-11/12 justify-self-center self-center mb-5'>
+      <div className='w-11/12 justify-self-center self-center mb-2'>
         <p className='font-semibold text-2xl'>Contacto</p>
       </div>
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='cellphoneNumber'><span className='text-red-500'>*</span>Número de celular</label>
             {(values.cellphoneNumber === initialValues.cellphoneNumber && !touched.cellphoneNumber) ? null : (errors.cellphoneNumber ? (<div className='text-red-500'>{errors.cellphoneNumber}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='cellphoneNumber' type='tel'
             placeholder={!touched.cellphoneNumber ? '98190572' : ''}
-            className={`min-w-full ${(values.cellphoneNumber === initialValues.cellphoneNumber && !touched.cellphoneNumber) ? '' : (errors.cellphoneNumber ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.cellphoneNumber === initialValues.cellphoneNumber && !touched.cellphoneNumber) ? '' : (errors.cellphoneNumber && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='telephoneNumber'><span className='text-red-500'>*</span>Teléfono de casa</label>
             {(values.telephoneNumber === initialValues.telephoneNumber && !touched.telephoneNumber) ? null : (errors.telephoneNumber ? (<div className='text-red-500'>{errors.telephoneNumber}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='telephoneNumber' type='tel'
             placeholder={!touched.telephoneNumber ? '25029039' : ''}
-            className={`min-w-full ${(values.telephoneNumber === initialValues.telephoneNumber && !touched.telephoneNumber) ? '' : (errors.telephoneNumber ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.telephoneNumber === initialValues.telephoneNumber && !touched.telephoneNumber) ? '' : (errors.telephoneNumber && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
-        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-          <div className='flex flex-row space-x-2'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
             <label htmlFor='faxNumber'>Número de fax</label>
             {(values.faxNumber === initialValues.faxNumber && !touched.faxNumber) ? null : (errors.faxNumber ? (<div className='text-red-500'>{errors.faxNumber}</div>) : values.faxNumber?.length > 0 && <FcCheckmark />)}
           </div>
           <Field
             name='faxNumber' type='tel'
             placeholder={!touched.faxNumber ? '22903902' : ''}
-            className={`min-w-full ${(values.faxNumber === initialValues.faxNumber && !touched.faxNumber) ? '' : (errors.faxNumber ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.faxNumber === initialValues.faxNumber && !touched.faxNumber) ? '' : (errors.faxNumber && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             style={{ outline: 'none' }}
           />
         </div>
