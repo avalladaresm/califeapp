@@ -12,6 +12,8 @@ import { format, subDays, subYears } from 'date-fns'
 import HolderHealthQuestionnaire from './HolderHealthQuestionnaire';
 import DependantHealthQuestionnaire from './DependantHealthQuestionnaire';
 import PeopleAged50Exams from './PeopleAged50Exams';
+import { createCustomer } from '../../services/Customer'
+import { store } from "react-notifications-component"
 
 interface NewCustomer {
   firstname: string,
@@ -93,7 +95,7 @@ const NewEmployee = (props) => {
   }]
   console.log('form')
 
-  const NewEmployeeSchema = object().shape({
+  const NewCustomerSchema = object().shape({
     name: string()
       .min(2, 'Too Short!')
       .max(255, 'Too Long!')
@@ -153,6 +155,7 @@ const NewEmployee = (props) => {
   });
 
   const initialValues = {
+    uid: auth.uid,
     firstname: '',
     middlename: '',
     firstSurname: '',
@@ -173,6 +176,7 @@ const NewEmployee = (props) => {
     street: '',
     block: null,
     houseNumber: null,
+    addressType: '',
     cityId: null,
     stateId: null,
     countryId: null,
@@ -183,10 +187,10 @@ const NewEmployee = (props) => {
     phoneNumber: '',
     phoneNumberType: '',
 
-    beneficiaryFullName: '',
-    beneficiaryKin: '',
-    beneficiaryIdentificationDocument: '',
-    beneficiaryPercentage: null,
+    /*beneficiaryFullName: '',
+   beneficiaryKin: '',
+   beneficiaryIdentificationDocument: '',
+   beneficiaryPercentage: null, */
 
 
   }
@@ -195,7 +199,7 @@ const NewEmployee = (props) => {
 
     <Formik
       initialValues={initialValues}
-      validationSchema={NewEmployeeSchema}
+      //validationSchema={NewCustomerSchema}
       onSubmit={async (values, { resetForm }) => {
         console.log('v', values)
         try {
@@ -204,10 +208,26 @@ const NewEmployee = (props) => {
           values.cityId = values.cityId
           values.stateId = values.stateId
           values.countryId = values.countryId
-          values.roleId = values.roleId
-          let res = await createEmployeeAccount(auth.a_t, values)
-          if (res.status === 200)
-            console.log('yeyy') */
+          values.roleId = values.roleId*/
+          values.uid = auth.uid
+          values.addressType = 'Casa'
+          values.cityId = 1
+          values.stateId = 1
+          values.countryId = 1
+          values.gender = 'Masculino'
+          let res = await createCustomer(auth.a_t, values)
+          if (res.status === 200) {
+            console.log('yeyy')
+            store.addNotification({
+              message: `El cliente se creó exitósamente.`,
+              type: 'success',
+              insert: 'bottom',
+              container: 'top-center',
+              animationIn: ['animate__animated', 'animate__fadeIn'],
+              animationOut: ['animate__animated', 'animate__fadeOut'],
+              dismiss: { duration: 5000 }
+            });
+          }
           resetForm()
         }
         catch (e) {
@@ -623,7 +643,7 @@ const NewEmployee = (props) => {
               </div>
 
               {/* Beneficiarios */}
-              <div className='w-11/12 justify-self-center self-center mb-5' >
+              {/* <div className='w-11/12 justify-self-center self-center mb-5' >
                 <p className='font-semibold text-2xl'>Beneficiarios</p>
               </div>
               <div className='flex flex-wrap mx-2 justify-evenly self-center'>
@@ -675,31 +695,8 @@ const NewEmployee = (props) => {
                     style={{ outline: 'none' }}
                   />
                 </div>
-              </div>
+              </div> */}
 
-              {/* Questionario de salud titular */}
-              <div className='w-11/12 justify-self-center self-center mb-5' >
-                <p className='font-semibold text-2xl'>Questionario de Salud del Titular</p>
-              </div>
-              <div className='flex flex-wrap mx-2 justify-evenly self-center'>
-                <HolderHealthQuestionnaire />
-              </div>
-
-              {/* Questionario de salud titular */}
-              <div className='w-11/12 justify-self-center self-center mb-5' >
-                <p className='font-semibold text-2xl'>Questionario de Salud del Dependiente</p>
-              </div>
-              <div className='flex flex-wrap mx-2 justify-evenly self-center'>
-                <DependantHealthQuestionnaire />
-              </div>
-
-              {/* Examenes Personas Mayores de 50 Años */}
-              <div className='w-11/12 justify-self-center self-center mb-5' >
-                <p className='font-semibold text-2xl'>Examenes Personas Mayores de 50 Años</p>
-              </div>
-              <div className='flex flex-wrap mx-2 justify-start'>
-                <PeopleAged50Exams />
-              </div>
             </div>
           </div>
         </Form>
@@ -710,3 +707,26 @@ const NewEmployee = (props) => {
 }
 
 export default NewEmployee
+{/* Questionario de salud titular */ }
+{/* <div className='w-11/12 justify-self-center self-center mb-5' >
+  <p className='font-semibold text-2xl'>Questionario de Salud del Titular</p>
+</div>
+<div className='flex flex-wrap mx-2 justify-evenly self-center'>
+  <HolderHealthQuestionnaire />
+</div> */}
+
+{/* Questionario de salud titular */ }
+{/* <div className='w-11/12 justify-self-center self-center mb-5' >
+  <p className='font-semibold text-2xl'>Questionario de Salud del Dependiente</p>
+</div>
+<div className='flex flex-wrap mx-2 justify-evenly self-center'>
+  <DependantHealthQuestionnaire />
+</div> */}
+
+{/* Examenes Personas Mayores de 50 Años */ }
+{/* <div className='w-11/12 justify-self-center self-center mb-5' >
+  <p className='font-semibold text-2xl'>Examenes Personas Mayores de 50 Años</p>
+</div>
+<div className='flex flex-wrap mx-2 justify-start'>
+  <PeopleAged50Exams />
+</div> */}
