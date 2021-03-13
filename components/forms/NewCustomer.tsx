@@ -14,6 +14,8 @@ import DependantHealthQuestionnaire from './DependantHealthQuestionnaire';
 import PeopleAged50Exams from './PeopleAged50Exams';
 import { createCustomer } from '../../services/Customer'
 import { store } from 'react-notifications-component'
+import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
+import MunicipalityDropdown from '../MunicipalityDropdown';
 
 interface NewCustomer {
   firstname: string,
@@ -36,9 +38,9 @@ interface NewCustomer {
   street: string,
   block: number,
   houseNumber: number,
-  cityId: number,
-  stateId: number,
-  countryId: number,
+  city: string,
+  state: string,
+  country: string,
 
   identificationDocument: string,
   identificationDocumentType: string,
@@ -52,48 +54,11 @@ export interface OptionType {
   value: number | string
 }
 
-const NewCustomer = (props) => {
-  const [countries, setCoutries] = useState([])
-  const [selectedCountry, setSelectedCountry] = useState<number>(undefined)
-  const [states, setStates] = useState([])
-  const [selectedState, setSelectedState] = useState<number>(undefined)
-  const [cities, setCities] = useState([])
+const NewCustomer = () => {
   const [selectedDob, setSelectedDob] = useState<Date>();
-  const [selectedHiredOn, setSelectedHiredOn] = useState<Date>();
 
-  const isFetching = useIsFetching()
   const queryClient = useQueryClient()
-
   const auth: LoggedInUserCookieData = useAuth(queryClient)
-
-  const genderOptions = [{
-    value: 'Male', label: 'Male'
-  }, {
-    value: 'Female', label: 'Female'
-  }, {
-    value: 'Other', label: 'Other'
-  }]
-
-  const determineManagerialRoleId = (employerRole: string[]): number => {
-    if (employerRole?.includes('PERSON_ADMIN'))
-      return 4
-    else if (employerRole?.includes('BUSINESS_ADMIN'))
-      return 5
-  }
-
-  const determineEmployeeRoleId = (employerRole: string[]): number => {
-    if (employerRole?.includes('PERSON_ADMIN'))
-      return 6
-    else if (employerRole?.includes('BUSINESS_ADMIN'))
-      return 7
-  }
-
-  const employeeRoleOptions = [{
-    value: determineManagerialRoleId(props?.cookies?.r), label: 'Managerial'
-  }, {
-    value: determineEmployeeRoleId(props?.cookies?.r), label: 'Employee'
-  }]
-  console.log('form')
 
   const NewCustomerSchema = object().shape({
     firstname: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
@@ -110,6 +75,15 @@ const NewCustomer = (props) => {
     height: number().typeError('Solo se aceptan números!').positive('Debe ser un número positivo!').max(3, 'Estatura debe ser en metros!').required('Requerido!'),
     worksAt: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
     workAddress: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    neighborhood: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    avenue: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    street: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    block: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    houseNumber: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    addressType: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    city: string().required('Requerido!'),
+    state: string().required('Requerido!'),
+    country: string().required('Requerido!')
   });
 
   const initialValues = {
@@ -135,9 +109,9 @@ const NewCustomer = (props) => {
     block: null,
     houseNumber: null,
     addressType: '',
-    cityId: null,
-    stateId: null,
-    countryId: null,
+    city: '',
+    state: '',
+    country: '',
 
     identificationDocument: '',
     identificationDocumentType: '',
@@ -159,18 +133,8 @@ const NewCustomer = (props) => {
       onSubmit={async (values, { resetForm }) => {
         console.log('v', values)
         try {
-          /* values.employerId = auth?.aid
-          values.gender = values.gender
-          values.cityId = values.cityId
-          values.stateId = values.stateId
-          values.countryId = values.countryId
-          values.roleId = values.roleId*/
           values.uid = auth.uid
           values.addressType = 'Casa'
-          values.cityId = 1
-          values.stateId = 1
-          values.countryId = 1
-          values.gender = 'Masculino'
           let res = await createCustomer(auth.a_t, values)
           if (res.status === 200) {
             console.log('yeyy')
@@ -187,25 +151,32 @@ const NewCustomer = (props) => {
           resetForm()
         }
         catch (e) {
-          console.log(e)
+          store.addNotification({
+            message: `El cliente no se pudo crear debido a un error. Inténtalo más tarde.`,
+            type: 'danger',
+            insert: 'bottom',
+            container: 'top-center',
+            animationIn: ['animate__animated', 'animate__fadeIn'],
+            animationOut: ['animate__animated', 'animate__fadeOut'],
+            dismiss: { duration: 5000 }
+          });
         }
       }}
     >
       {({ errors, touched, initialValues, values, resetForm, setFieldValue, setTouched, handleSubmit, isSubmitting }) => (
         <Form onSubmit={handleSubmit}>
-          {console.log('vaaa', values)}
           <div className='flex flex-col w-full h-auto rounded-md border border-blueGray-300 bg-white'>
-            <div className='flex flex-col p-4 max-w-6xl xl:w-4/5 lg:w-11/12 w-full justify-self-center self-center'>
+            <div className='flex flex-col p-4 max-w-7xl xl:w-4/5 lg:w-11/12 w-full justify-self-center self-center'>
               {/* Action buttons */}
               <div className='flex justify-end rounded-b space-x-2 mb-3'>
                 <button
                   className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-coolGray-500 hover:bg-coolGray-600 active:bg-coolGray-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner'
                   type='button'
                   style={{ transition: 'all .15s ease', outline: 'none' }}
-                  onClick={() => { resetForm(initialValues as Partial<FormikState<NewCustomer>>), setSelectedCountry(0), setSelectedState(undefined) }}
+                  onClick={() => resetForm(initialValues as Partial<FormikState<NewCustomer>>)}
                 >
                   Reset
-                      </button>
+                </button>
 
                 {isSubmitting ?
                   <button
@@ -237,6 +208,8 @@ const NewCustomer = (props) => {
                 initialValues={initialValues}
                 touched={touched}
                 errors={errors}
+                setFieldValue={setFieldValue}
+                setTouched={setTouched}
               />
               <IdentificationDocument
                 values={values}
@@ -549,7 +522,7 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
   )
 }
 
-const Address = ({ values, initialValues, touched, errors }) => {
+const Address = ({ values, initialValues, touched, errors, setFieldValue, setTouched }) => {
   return (
     <div>
       <div className='w-11/12 justify-self-center self-center mb-5'>
@@ -557,31 +530,19 @@ const Address = ({ values, initialValues, touched, errors }) => {
       </div>
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
         <div className='flex flex-wrap w-full justify-evenly align-middle'>
-          <div className='flex-grow ml-2 mb-2'>
+          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
             <div className='flex flex-row space-x-2'>
-              <label htmlFor='neighborhood'><span className='text-red-500'>*</span>Street address</label>
+              <label htmlFor='neighborhood'><span className='text-red-500'>*</span>Colonia o Barrio</label>
               {(values.neighborhood === initialValues.neighborhood && !touched.neighborhood) ? null : (errors.neighborhood ? (<div className='text-red-500'>{errors.neighborhood}</div>) : <FcCheckmark />)}
             </div>
             <Field
               name='neighborhood'
-              placeholder={!touched.neighborhood ? 'Pedro' : ''}
+              placeholder={!touched.neighborhood ? 'Colonia Las Flores' : ''}
               className={`min-w-full ${(values.neighborhood === initialValues.neighborhood && !touched.neighborhood) ? '' : (errors.neighborhood ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
               style={{ outline: 'none' }}
             />
           </div>
-          <div className='flex-grow ml-2 mb-2'>
-            <div className='flex flex-row space-x-2'>
-              <label htmlFor='avenue'><span className='text-red-500'>*</span>Avenida</label>
-              {(values.avenue === initialValues.avenue && !touched.avenue) ? null : (errors.avenue ? (<div className='text-red-500'>{errors.avenue}</div>) : <FcCheckmark />)}
-            </div>
-            <Field
-              name='avenue'
-              placeholder={!touched.avenue ? 'Pedro' : ''}
-              className={`min-w-full ${(values.avenue === initialValues.avenue && !touched.avenue) ? '' : (errors.avenue ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
-              style={{ outline: 'none' }}
-            />
-          </div>
-          <div className='flex-grow ml-2 mb-2'>
+          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
             <div className='flex flex-row space-x-2'>
               <label htmlFor='street'><span className='text-red-500'>*</span>Calle</label>
               {(values.street === initialValues.street && !touched.street) ? null : (errors.street ? (<div className='text-red-500'>{errors.street}</div>) : <FcCheckmark />)}
@@ -593,7 +554,19 @@ const Address = ({ values, initialValues, touched, errors }) => {
               style={{ outline: 'none' }}
             />
           </div>
-          <div className='flex-grow-0 ml-2 mb-2 w-full sm:w-auto'>
+          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2'>
+              <label htmlFor='avenue'><span className='text-red-500'>*</span>Avenida</label>
+              {(values.avenue === initialValues.avenue && !touched.avenue) ? null : (errors.avenue ? (<div className='text-red-500'>{errors.avenue}</div>) : <FcCheckmark />)}
+            </div>
+            <Field
+              name='avenue'
+              placeholder={!touched.avenue ? 'Pedro' : ''}
+              className={`min-w-full ${(values.avenue === initialValues.avenue && !touched.avenue) ? '' : (errors.avenue ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
+              style={{ outline: 'none' }}
+            />
+          </div>
+          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
             <div className='flex flex-row space-x-2'>
               <label htmlFor='block'>Bloque</label>
             </div>
@@ -604,7 +577,7 @@ const Address = ({ values, initialValues, touched, errors }) => {
               style={{ outline: 'none' }}
             />
           </div>
-          <div className='flex-grow-0 ml-2 mb-2 w-full sm:w-auto'>
+          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
             <div className='flex flex-row space-x-2'>
               <label htmlFor='houseNumber'>No. de Casa</label>
             </div>
@@ -616,55 +589,63 @@ const Address = ({ values, initialValues, touched, errors }) => {
             />
           </div>
         </div>
-        {/* <div className='flex flex-wrap w-full justify-evenly align-middle'>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-                  <label htmlFor='countryId'>Country</label>
-                  <Field name='countryId' className='min-w-full'
-                    children={({ field }) => (
-                      <Select {...field} value={values.countryId} menuPlacement='auto'
-                        onChange={(v) => {
-                          setFieldValue(field.name, v);
-                          setSelectedCountry(v.value);
-                          setFieldValue('stateId', '');
-                          setFieldValue('cityId', '');
-                        }}
-                        options={countries ?? []} placeholder='Select a country' label='Country'
-                        onTouch={() => setTouched({ ...touched, countryId: true })}
-                      />
-                    )}
-                  />
-                </div>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-                  <label htmlFor='stateId'>State</label>
-                  <Field name='stateId'
-                    children={({ field }) => (
-                      <Select {...field} isDisabled={!(selectedCountry > 0)} value={values.stateId}
-                        onChange={(v) => {
-                          setFieldValue(field.name, v);
-                          setSelectedState(v.value);
-                          setFieldValue('cityId', '');
-                        }} menuPlacement='auto'
-                        options={states ?? []} placeholder='Select a state' label='State'
-                        onTouch={() => setTouched({ ...touched, stateId: true })}
-                      />
-                    )}
-                  />
-                </div>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-                  <label htmlFor='cityId'>City</label>
-                  <Field name='cityId'
-                    children={({ field }) => (
-                      <Select {...field} isDisabled={!(selectedState > 0)} value={values.cityId}
-                        onChange={(v) => {
-                          setFieldValue(field.name, v)
-                        }} menuPlacement='auto'
-                        options={cities ?? []} placeholder='Select a city' label='City'
-                        onTouch={() => setTouched({ ...touched, cityId: true })}
-                      />
-                    )}
-                  />
-                </div>
-              </div> */}
+        <div className='flex flex-wrap w-full justify-evenly align-middle'>
+          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2'>
+              <label htmlFor='country'><span className='text-red-500'>*</span>País</label>
+            </div>
+            <Field
+              name='country'
+              onTouch={() => setTouched({ ...touched, country: true })}
+              children={({ field }) => (
+                <CountryDropdown
+                  {...field}
+                  value={values.country}
+                  priorityOptions={['HN']}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.country === initialValues.country && !touched.country) ? '' : (errors.country && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+                  onChange={(v) => setFieldValue(field.name, v)}
+                />
+              )}
+            />
+          </div>
+          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2'>
+              <label htmlFor='state'><span className='text-red-500'>*</span>Departamento</label>
+            </div>
+            <Field
+              name='state'
+              onTouch={() => setTouched({ ...touched, state: true })}
+              children={({ field }) => (
+                <RegionDropdown
+                  {...field}
+                  country={values.country}
+                  value={values.state}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.state === initialValues.state && !touched.state) ? '' : (errors.state && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+                  onChange={(v) => setFieldValue(field.name, v)}
+                />
+              )}
+            />
+          </div>
+          <div className='flex-grow ml-2 mb-2 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2'>
+              <label htmlFor='city'><span className='text-red-500'>*</span>Municipio</label>
+            </div>
+            <Field
+              name='city'
+              onTouch={() => setTouched({ ...touched, city: true })}
+              children={({ field }) => (
+                <MunicipalityDropdown
+                  {...field}
+                  country={values.country}
+                  region={values.state}
+                  value={values.city}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.city === initialValues.city && !touched.city) ? '' : (errors.city && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+                  onChange={(v) => setFieldValue(field.name, v)}
+                />
+              )}
+            />
+          </div>
+        </div>
       </div>
     </div>
   )
