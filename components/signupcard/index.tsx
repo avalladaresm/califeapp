@@ -135,7 +135,6 @@ export const SignupCard: FC<LoginSettings> = () => {
                 </div>
                 <Field
                   name='dob' type='date'
-                  placeholder={!touched.dob ? 'Ramirez' : ''}
                   className={`w-full p-2 rounded-sm h-10 ${(values.dob === initialValues.dob && !touched.dob) ? '' : (errors.dob && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
                   style={{ outline: 'none' }}
                   onChange={(e) => {

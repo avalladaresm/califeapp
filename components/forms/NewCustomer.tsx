@@ -13,7 +13,7 @@ import HolderHealthQuestionnaire from './HolderHealthQuestionnaire';
 import DependantHealthQuestionnaire from './DependantHealthQuestionnaire';
 import PeopleAged50Exams from './PeopleAged50Exams';
 import { createCustomer } from '../../services/Customer'
-import { store } from "react-notifications-component"
+import { store } from 'react-notifications-component'
 
 interface NewCustomer {
   firstname: string,
@@ -96,73 +96,31 @@ const NewCustomer = (props) => {
   console.log('form')
 
   const NewCustomerSchema = object().shape({
-    name: string()
-      .min(2, 'Too Short!')
-      .max(255, 'Too Long!')
-      .required('Required'),
-    surname: string()
-      .min(2, 'Too Short!')
-      .max(255, 'Too Long!')
-      .required('Required'),
-    gender: object()
-      .required('Required!'),
-    username: string()
-      .min(2, 'Too Short!')
-      .max(25, 'Too Long!')
-      .required('Required'),
-    password: string()
-      .min(2, 'Too Short!')
-      .max(25, 'Too Long!')
-      .required('Required'),
-    dob: date()
-      .max(
-        subYears(new Date(), 18), selectedDob > new Date() ?
-        'Dude your new employee hasn\'t even born yet? wtf??' :
-        'Employee must be at least 18 years old!'
-      )
-      .required('Employee\'s date of birth is required!'),
-    position: string()
-      .required('Required'),
-    contractType: string()
-      .required('Required'),
-    salary: number()
-      .required('Required'),
-    roleId: object()
-      .required('Requied'),
-    hiredOn: date()
-      .max(
-        subDays(new Date(), 10), selectedHiredOn > new Date() &&
-      'You can only add a new employee if starting within the next 10 days!'
-      )
-      .required('Employee\'s hired date is required!'),
-    email: string()
-      .email('Invalid email')
-      .required('Required'),
-    emailType: string()
-      .required('Required'),
-    phoneNumber: string()
-      .required('Required'),
-    phoneNumberType: string()
-      .required('Required'),
-    streetAddress1: string()
-      .required('Required'),
-    cityId: object()
-      .required('Required'),
-    stateId: object()
-      .required('Required'),
-    countryId: object()
-      .required('Required')
+    firstname: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    middlename: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    firstSurname: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    secondSurname: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    surnameAfterMarried: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
+    email: string().email('Correo inválido'),
+    gender: string().required('Requerido!'),
+    birthDate: date().max(subYears(new Date(), 18), 'Tienes que tener al menos 18 años de edad!').required('Requerido!'),
+    maritalStatus: string().required('Requerido!'),
+    occupation: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    weight: number().typeError('Solo se aceptan números!').positive('Debe ser un número positivo!').required('Requerido!'),
+    height: number().typeError('Solo se aceptan números!').positive('Debe ser un número positivo!').max(3, 'Estatura debe ser en metros!').required('Requerido!'),
+    worksAt: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    workAddress: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
   });
 
   const initialValues = {
-    uid: auth.uid,
+    uid: auth.uid ?? null,
     firstname: '',
     middlename: '',
     firstSurname: '',
     secondSurname: '',
     surnameAfterMarried: '',
     email: '',
-    gender: null,
+    gender: '',
     birthDate: '',
     maritalStatus: '',
     occupation: '',
@@ -191,15 +149,13 @@ const NewCustomer = (props) => {
    beneficiaryKin: '',
    beneficiaryIdentificationDocument: '',
    beneficiaryPercentage: null, */
-
-
   }
 
   return (
 
     <Formik
       initialValues={initialValues}
-      //validationSchema={NewCustomerSchema}
+      validationSchema={NewCustomerSchema}
       onSubmit={async (values, { resetForm }) => {
         console.log('v', values)
         try {
@@ -237,6 +193,7 @@ const NewCustomer = (props) => {
     >
       {({ errors, touched, initialValues, values, resetForm, setFieldValue, setTouched, handleSubmit, isSubmitting }) => (
         <Form onSubmit={handleSubmit}>
+          {console.log('vaaa', values)}
           <div className='flex flex-col w-full h-auto rounded-md border border-blueGray-300 bg-white'>
             <div className='flex flex-col p-4 max-w-6xl xl:w-4/5 lg:w-11/12 w-full justify-self-center self-center'>
               {/* Action buttons */}
@@ -294,9 +251,6 @@ const NewCustomer = (props) => {
                 errors={errors}
               />
 
-              {/* Contact related */}
-
-
               {/* Beneficiarios */}
               {/* <div className='w-11/12 justify-self-center self-center mb-5' >
                 <p className='font-semibold text-2xl'>Beneficiarios</p>
@@ -304,8 +258,8 @@ const NewCustomer = (props) => {
               <div className='flex flex-wrap mx-2 justify-evenly self-center'>
                 <div className='flex-grow ml-2 mb-2 2xl:w-64 w-96'>
                   <div className='flex flex-row space-x-2'>
-                    <label htmlFor='beneficiaryFullName'><span className='text-red-600'>*</span>Nombre Completo</label>
-                    {(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? null : (errors.beneficiaryFullName ? (<div className='text-red-600'>{errors.beneficiaryFullName}</div>) : <FcCheckmark />)}
+                    <label htmlFor='beneficiaryFullName'><span className='text-red-500'>*</span>Nombre Completo</label>
+                    {(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? null : (errors.beneficiaryFullName ? (<div className='text-red-500'>{errors.beneficiaryFullName}</div>) : <FcCheckmark />)}
                   </div>
                   <Field
                     name='beneficiaryFullName'
@@ -316,8 +270,8 @@ const NewCustomer = (props) => {
                 </div>
                 <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
                   <div className='flex flex-row space-x-2'>
-                    <label htmlFor='beneficiaryKin'><span className='text-red-600'>*</span>Parentesco</label>
-                    {(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? null : (errors.beneficiaryKin ? (<div className='text-red-600'>{errors.beneficiaryKin}</div>) : <FcCheckmark />)}
+                    <label htmlFor='beneficiaryKin'><span className='text-red-500'>*</span>Parentesco</label>
+                    {(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? null : (errors.beneficiaryKin ? (<div className='text-red-500'>{errors.beneficiaryKin}</div>) : <FcCheckmark />)}
                   </div>
                   <Field
                     name='beneficiaryKin'
@@ -328,8 +282,8 @@ const NewCustomer = (props) => {
                 </div>
                 <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
                   <div className='flex flex-row space-x-2'>
-                    <label htmlFor='beneficiaryIdentificationDocument'><span className='text-red-600'>*</span>Documento de Identificación</label>
-                    {(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? null : (errors.beneficiaryIdentificationDocument ? (<div className='text-red-600'>{errors.beneficiaryIdentificationDocument}</div>) : <FcCheckmark />)}
+                    <label htmlFor='beneficiaryIdentificationDocument'><span className='text-red-500'>*</span>Documento de Identificación</label>
+                    {(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? null : (errors.beneficiaryIdentificationDocument ? (<div className='text-red-500'>{errors.beneficiaryIdentificationDocument}</div>) : <FcCheckmark />)}
                   </div>
                   <Field
                     name='beneficiaryIdentificationDocument'
@@ -340,8 +294,8 @@ const NewCustomer = (props) => {
                 </div>
                 <div className='flex-grow ml-2 mb-2 2xl:w-64 w-28 border-orange-500'>
                   <div className='flex flex-row space-x-2'>
-                    <label htmlFor='beneficiaryPercentage'><span className='text-red-600'>*</span>Porcentaje</label>
-                    {(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? null : (errors.beneficiaryPercentage ? (<div className='text-red-600'>{errors.beneficiaryPercentage}</div>) : <FcCheckmark />)}
+                    <label htmlFor='beneficiaryPercentage'><span className='text-red-500'>*</span>Porcentaje</label>
+                    {(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? null : (errors.beneficiaryPercentage ? (<div className='text-red-500'>{errors.beneficiaryPercentage}</div>) : <FcCheckmark />)}
                   </div>
                   <Field
                     name='beneficiaryPercentage'
@@ -389,15 +343,15 @@ export default NewCustomer
 
 const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setSelectedDob, setFieldValue, setTouched }) => {
   return (
-    <div className="">
+    <div>
       <div className='w-11/12 justify-self-center self-center mb-5' >
         <p className='font-semibold text-2xl'>Datos Personales</p>
       </div>
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='firstname'><span className='text-red-600'>*</span>Primer nombre</label>
-            {(values.firstname === initialValues.firstname && !touched.firstname) ? null : (errors.firstname ? (<div className='text-red-600'>{errors.firstname}</div>) : <FcCheckmark />)}
+            <label htmlFor='firstname'><span className='text-red-500'>*</span>Primer nombre</label>
+            {(values.firstname === initialValues.firstname && !touched.firstname) ? null : (errors.firstname ? (<div className='text-red-500'>{errors.firstname}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='firstname'
@@ -408,56 +362,56 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='middlename'><span className='text-red-600'>*</span>Segundo nombre</label>
-            {(values.middlename === initialValues.middlename && !touched.middlename) ? null : (errors.middlename ? (<div className='text-red-600'>{errors.middlename}</div>) : <FcCheckmark />)}
+            <label htmlFor='middlename'><span className='text-red-500'>*</span>Segundo nombre</label>
+            {(values.middlename === initialValues.middlename && !touched.middlename) ? null : (errors.middlename ? (<div className='text-red-500'>{errors.middlename}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='middlename'
-            placeholder={!touched.middlename ? 'Ramirez' : ''}
+            placeholder={!touched.middlename ? 'Alberto' : ''}
             className={`min-w-full ${(values.middlename === initialValues.middlename && !touched.middlename) ? '' : (errors.middlename ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
           />
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='firstSurname'><span className='text-red-600'>*</span>Primer apellido</label>
-            {(values.firstSurname === initialValues.firstSurname && !touched.firstSurname) ? null : (errors.firstSurname ? (<div className='text-red-600'>{errors.firstSurname}</div>) : <FcCheckmark />)}
+            <label htmlFor='firstSurname'><span className='text-red-500'>*</span>Primer apellido</label>
+            {(values.firstSurname === initialValues.firstSurname && !touched.firstSurname) ? null : (errors.firstSurname ? (<div className='text-red-500'>{errors.firstSurname}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='firstSurname'
-            placeholder={!touched.firstSurname ? 'Ramirez' : ''}
+            placeholder={!touched.firstSurname ? 'Pascal' : ''}
             className={`min-w-full ${(values.firstSurname === initialValues.firstSurname && !touched.firstSurname) ? '' : (errors.firstSurname ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
           />
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='secondSurname'><span className='text-red-600'>*</span>Segundo apellido</label>
-            {(values.secondSurname === initialValues.secondSurname && !touched.secondSurname) ? null : (errors.secondSurname ? (<div className='text-red-600'>{errors.secondSurname}</div>) : <FcCheckmark />)}
+            <label htmlFor='secondSurname'><span className='text-red-500'>*</span>Segundo apellido</label>
+            {(values.secondSurname === initialValues.secondSurname && !touched.secondSurname) ? null : (errors.secondSurname ? (<div className='text-red-500'>{errors.secondSurname}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='secondSurname'
-            placeholder={!touched.secondSurname ? 'Ramirez' : ''}
+            placeholder={!touched.secondSurname ? 'Figueroa' : ''}
             className={`min-w-full ${(values.secondSurname === initialValues.secondSurname && !touched.secondSurname) ? '' : (errors.secondSurname ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
           />
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='surnameAfterMarried'><span className='text-red-600'>*</span>Apellido de casada</label>
-            {(values.surnameAfterMarried === initialValues.surnameAfterMarried && !touched.surnameAfterMarried) ? null : (errors.surnameAfterMarried ? (<div className='text-red-600'>{errors.surnameAfterMarried}</div>) : <FcCheckmark />)}
+            <label htmlFor='surnameAfterMarried'>Apellido de casada</label>
+            {(values.surnameAfterMarried === initialValues.surnameAfterMarried && !touched.surnameAfterMarried) ? null : (errors.surnameAfterMarried ? (<div className='text-red-500'>{errors.surnameAfterMarried}</div>) : values.surnameAfterMarried?.length > 0 && <FcCheckmark />)}
           </div>
           <Field
             name='surnameAfterMarried'
-            placeholder={!touched.surnameAfterMarried ? '' : ''}
+            placeholder={!touched.surnameAfterMarried ? 'López' : ''}
             className={`min-w-full ${(values.surnameAfterMarried === initialValues.surnameAfterMarried && !touched.surnameAfterMarried) ? '' : (errors.surnameAfterMarried ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
           />
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64 border-orange-500'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='email'><span className='text-red-600'>*</span>Email</label>
-            {(values.email === initialValues.email && !touched.email) ? null : (errors.email ? (<div className='text-red-600'>{errors.email}</div>) : <FcCheckmark />)}
+            <label htmlFor='email'>Email</label>
+            {(values.email === initialValues.email && !touched.email) ? null : (errors.email ? (<div className='text-red-500'>{errors.email}</div>) : values.email?.length > 0 && <FcCheckmark />)}
           </div>
           <Field
             name='email'
@@ -468,41 +422,56 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='gender'><span className='text-red-600'>*</span>Sexo</label>
-            {(values.gender === initialValues.gender && !touched.gender) ? null : (errors.gender ? (<div className='text-red-600'>{errors.gender}</div>) : <FcCheckmark />)}
+            <label htmlFor='gender'><span className='text-red-500'>*</span>Sexo</label>
+            {(values.gender === initialValues.gender && !touched.gender) ? null : (errors.gender ? (<div className='text-red-500'>{errors.gender}</div>) : <FcCheckmark />)}
           </div>
           <Field name='gender'
-            placeholder={!touched.gender ? 'Masculino' : ''}
             className={`min-w-full ${(values.gender === initialValues.gender && !touched.gender) ? '' : (errors.gender ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
-          /* children={({ field }) => (
-          <Select {...field} value={values.gender} menuPlacement='auto'
-            onChange={(v: OptionType) => {
-              setFieldValue(field.name, v);
-            }}
-            className={`min-w-full ${(values.gender === initialValues.gender && !touched.gender) ? '' : (errors.gender ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} text-center shadow-sm rounded-sm h-10 border border-gray-300`}
-            options={genderOptions} placeholder='Select gender'
-            onBlur={() => setTouched({ ...touched, gender: true })}
-          />
-        )} */
+            children={({ field }) => (
+              <select name='gender' id='gender'
+                className={`min-w-full ${(values.gender === initialValues.gender && !touched.gender) ? '' : (errors.gender ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} text-center shadow-sm rounded-sm h-10 border border-gray-300`}
+                onChange={v => {
+                  setFieldValue(field.name, v.target.value);
+                }}
+                onBlur={() => setTouched({ ...touched, gender: true })}
+              >
+                <option value=''>Seleccione su sexo</option>
+                <option value='Femenino'>Femenino</option>
+                <option value='Masculino'>Masculino</option>
+              </select>
+            )}
           />
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='maritalStatus'><span className='text-red-600'>*</span>Estado Civil</label>
-            {(values.maritalStatus === initialValues.maritalStatus && !touched.maritalStatus) ? null : (errors.maritalStatus ? (<div className='text-red-600'>{errors.maritalStatus}</div>) : <FcCheckmark />)}
+            <label htmlFor='maritalStatus'><span className='text-red-500'>*</span>Estado Civil</label>
+            {(values.maritalStatus === initialValues.maritalStatus && !touched.maritalStatus) ? null : (errors.maritalStatus ? (<div className='text-red-500'>{errors.maritalStatus}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='maritalStatus'
-            placeholder={!touched.maritalStatus ? 'Soltero' : ''}
             className={`min-w-full ${(values.maritalStatus === initialValues.maritalStatus && !touched.maritalStatus) ? '' : (errors.maritalStatus ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} p-2 shadow-sm rounded-sm h-10 border border-gray-300`}
             style={{ outline: 'none' }}
+            children={({ field }) => (
+              <select name='maritalStatus' id='maritalStatus'
+                className={`min-w-full ${(values.maritalStatus === initialValues.maritalStatus && !touched.maritalStatus) ? '' : (errors.maritalStatus ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} text-center shadow-sm rounded-sm h-10 border border-gray-300`}
+                onChange={v => {
+                  setFieldValue(field.name, v.target.value);
+                }}
+                onBlur={() => setTouched({ ...touched, maritalStatus: true })}
+              >
+                <option value=''>Seleccione su estado civil</option>
+                <option value='Casado'>Casado (a)</option>
+                <option value='Soltero'>Soltero (a)</option>
+                <option value='Otro'>Otro (s)</option>
+              </select>
+            )}
           />
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='occupation'><span className='text-red-600'>*</span>Ocupación</label>
-            {(values.occupation === initialValues.occupation && !touched.occupation) ? null : (errors.occupation ? (<div className='text-red-600'>{errors.occupation}</div>) : <FcCheckmark />)}
+            <label htmlFor='occupation'><span className='text-red-500'>*</span>Ocupación</label>
+            {(values.occupation === initialValues.occupation && !touched.occupation) ? null : (errors.occupation ? (<div className='text-red-500'>{errors.occupation}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='occupation'
@@ -513,34 +482,23 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='birthDate'><span className='text-red-600'>*</span>Fecha de Nacimiento</label>
-            {(values.birthDate === initialValues.birthDate && !touched.birthDate) ? null : (errors.birthDate ? (<div className='text-red-600'>{errors.birthDate}</div>) : <FcCheckmark />)}
+            <label htmlFor='birthDate'><span className='text-red-500'>*</span>Fecha de Nacimiento</label>
+            {(values.birthDate === initialValues.birthDate && !touched.birthDate) ? null : (errors.birthDate ? (<div className='text-red-500'>{errors.birthDate}</div>) : <FcCheckmark />)}
           </div>
-          <Field name='birthDate'
-            children={({ field }) => (
-              <DatePicker
-                className={`flex-grow 2xl:w-64 w-64 ${(values.birthDate === initialValues.birthDate && !touched.birthDate) ? '' : (errors.birthDate ? 'ring-2 ring-red-600 ring-inset ring-opacity-50' : 'focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500')} shadow-sm rounded-sm h-10 px-3 border border-gray-300`}
-                selected={selectedDob}
-                dateFormat='MMMM d, yyyy'
-                onChange={(date: Date) => {
-                  setSelectedDob(date);
-                  setFieldValue('birthDate', (date && format(date, 'P')) ?? '');
-                }}
-                peekNextMonth
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode='select'
-                todayButton="Today"
-                placeholderText={'Fecha de nacimiento del titular'}
-                onBlur={() => setTouched({ ...touched, birthDate: true })}
-              />
-            )}
+          <Field name='birthDate' type='date'
+            className={`min-w-full flex-grow 2xl:w-64 w-64 shadow-sm rounded-sm h-10 px-3 border border-gray-300 ${(values.birthDate === initialValues.birthDate && !touched.birthDate) ? '' : (errors.birthDate && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            onChange={(e) => {
+              setFieldValue('birthDate', (date && format(e.target.value, 'P')) ?? '');
+              setSelectedDob(e.target.value)
+            }}
+            value={selectedDob}
+            onBlur={() => setTouched({ ...touched, birthDate: true })}
           />
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='weight'><span className='text-red-600'>*</span>Peso (en lb)</label>
-            {(values.weight === initialValues.weight && !touched.weight) ? null : (errors.weight ? (<div className='text-red-600'>{errors.weight}</div>) : <FcCheckmark />)}
+            <label htmlFor='weight'><span className='text-red-500'>*</span>Peso (en lb)</label>
+            {(values.weight === initialValues.weight && !touched.weight) ? null : (errors.weight ? (<div className='text-red-500'>{errors.weight}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='weight'
@@ -551,8 +509,8 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='height'><span className='text-red-600'>*</span>Estatura (en m)</label>
-            {(values.height === initialValues.height && !touched.height) ? null : (errors.height ? (<div className='text-red-600'>{errors.height}</div>) : <FcCheckmark />)}
+            <label htmlFor='height'><span className='text-red-500'>*</span>Estatura (en m)</label>
+            {(values.height === initialValues.height && !touched.height) ? null : (errors.height ? (<div className='text-red-500'>{errors.height}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='height'
@@ -563,8 +521,8 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='worksAt'><span className='text-red-600'>*</span>Lugar de Trabajo</label>
-            {(values.worksAt === initialValues.worksAt && !touched.worksAt) ? null : (errors.worksAt ? (<div className='text-red-600'>{errors.worksAt}</div>) : <FcCheckmark />)}
+            <label htmlFor='worksAt'><span className='text-red-500'>*</span>Lugar de Trabajo</label>
+            {(values.worksAt === initialValues.worksAt && !touched.worksAt) ? null : (errors.worksAt ? (<div className='text-red-500'>{errors.worksAt}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='worksAt'
@@ -575,8 +533,8 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='workAddress'><span className='text-red-600'>*</span>Dirección de Trabajo</label>
-            {(values.workAddress === initialValues.workAddress && !touched.workAddress) ? null : (errors.workAddress ? (<div className='text-red-600'>{errors.workAddress}</div>) : <FcCheckmark />)}
+            <label htmlFor='workAddress'><span className='text-red-500'>*</span>Dirección de Trabajo</label>
+            {(values.workAddress === initialValues.workAddress && !touched.workAddress) ? null : (errors.workAddress ? (<div className='text-red-500'>{errors.workAddress}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='workAddress'
@@ -593,7 +551,7 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
 
 const Address = ({ values, initialValues, touched, errors }) => {
   return (
-    <div className="">
+    <div>
       <div className='w-11/12 justify-self-center self-center mb-5'>
         <p className='font-semibold text-2xl'>Barrio o Colonia</p>
       </div>
@@ -601,8 +559,8 @@ const Address = ({ values, initialValues, touched, errors }) => {
         <div className='flex flex-wrap w-full justify-evenly align-middle'>
           <div className='flex-grow ml-2 mb-2'>
             <div className='flex flex-row space-x-2'>
-              <label htmlFor='neighborhood'><span className='text-red-600'>*</span>Street address</label>
-              {(values.neighborhood === initialValues.neighborhood && !touched.neighborhood) ? null : (errors.neighborhood ? (<div className='text-red-600'>{errors.neighborhood}</div>) : <FcCheckmark />)}
+              <label htmlFor='neighborhood'><span className='text-red-500'>*</span>Street address</label>
+              {(values.neighborhood === initialValues.neighborhood && !touched.neighborhood) ? null : (errors.neighborhood ? (<div className='text-red-500'>{errors.neighborhood}</div>) : <FcCheckmark />)}
             </div>
             <Field
               name='neighborhood'
@@ -613,8 +571,8 @@ const Address = ({ values, initialValues, touched, errors }) => {
           </div>
           <div className='flex-grow ml-2 mb-2'>
             <div className='flex flex-row space-x-2'>
-              <label htmlFor='avenue'><span className='text-red-600'>*</span>Avenida</label>
-              {(values.avenue === initialValues.avenue && !touched.avenue) ? null : (errors.avenue ? (<div className='text-red-600'>{errors.avenue}</div>) : <FcCheckmark />)}
+              <label htmlFor='avenue'><span className='text-red-500'>*</span>Avenida</label>
+              {(values.avenue === initialValues.avenue && !touched.avenue) ? null : (errors.avenue ? (<div className='text-red-500'>{errors.avenue}</div>) : <FcCheckmark />)}
             </div>
             <Field
               name='avenue'
@@ -625,8 +583,8 @@ const Address = ({ values, initialValues, touched, errors }) => {
           </div>
           <div className='flex-grow ml-2 mb-2'>
             <div className='flex flex-row space-x-2'>
-              <label htmlFor='street'><span className='text-red-600'>*</span>Calle</label>
-              {(values.street === initialValues.street && !touched.street) ? null : (errors.street ? (<div className='text-red-600'>{errors.street}</div>) : <FcCheckmark />)}
+              <label htmlFor='street'><span className='text-red-500'>*</span>Calle</label>
+              {(values.street === initialValues.street && !touched.street) ? null : (errors.street ? (<div className='text-red-500'>{errors.street}</div>) : <FcCheckmark />)}
             </div>
             <Field
               name='street'
@@ -714,15 +672,15 @@ const Address = ({ values, initialValues, touched, errors }) => {
 
 const IdentificationDocument = ({ values, initialValues, touched, errors }) => {
   return (
-    <div className="">
+    <div>
       <div className='w-11/12 justify-self-center self-center mb-5'>
         <p className='font-semibold text-2xl'>Identificación</p>
       </div>
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='identificationDocument'><span className='text-red-600'>*</span>Documento de Identificación</label>
-            {(values.identificationDocument === initialValues.identificationDocument && !touched.identificationDocument) ? null : (errors.identificationDocument ? (<div className='text-red-600'>{errors.identificationDocument}</div>) : <FcCheckmark />)}
+            <label htmlFor='identificationDocument'><span className='text-red-500'>*</span>Documento de Identificación</label>
+            {(values.identificationDocument === initialValues.identificationDocument && !touched.identificationDocument) ? null : (errors.identificationDocument ? (<div className='text-red-500'>{errors.identificationDocument}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='identificationDocument'
@@ -733,8 +691,8 @@ const IdentificationDocument = ({ values, initialValues, touched, errors }) => {
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='identificationDocumentType'><span className='text-red-600'>*</span>Tipo de Documento de Identificación</label>
-            {(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? null : (errors.identificationDocumentType ? (<div className='text-red-600'>{errors.identificationDocumentType}</div>) : <FcCheckmark />)}
+            <label htmlFor='identificationDocumentType'><span className='text-red-500'>*</span>Tipo de Documento de Identificación</label>
+            {(values.identificationDocumentType === initialValues.identificationDocumentType && !touched.identificationDocumentType) ? null : (errors.identificationDocumentType ? (<div className='text-red-500'>{errors.identificationDocumentType}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='identificationDocumentType'
@@ -750,15 +708,15 @@ const IdentificationDocument = ({ values, initialValues, touched, errors }) => {
 
 const Contact = ({ values, initialValues, touched, errors }) => {
   return (
-    <div className="">
+    <div>
       <div className='w-11/12 justify-self-center self-center mb-5'>
         <p className='font-semibold text-2xl'>Contacto</p>
       </div>
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='phoneNumber'><span className='text-red-600'>*</span>Número de teléfono</label>
-            {(values.phoneNumber === initialValues.phoneNumber && !touched.phoneNumber) ? null : (errors.phoneNumber ? (<div className='text-red-600'>{errors.phoneNumber}</div>) : <FcCheckmark />)}
+            <label htmlFor='phoneNumber'><span className='text-red-500'>*</span>Número de teléfono</label>
+            {(values.phoneNumber === initialValues.phoneNumber && !touched.phoneNumber) ? null : (errors.phoneNumber ? (<div className='text-red-500'>{errors.phoneNumber}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='phoneNumber'
@@ -769,8 +727,8 @@ const Contact = ({ values, initialValues, touched, errors }) => {
         </div>
         <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
           <div className='flex flex-row space-x-2'>
-            <label htmlFor='phoneNumberType'><span className='text-red-600'>*</span>Tipo de número de teléfono</label>
-            {(values.phoneNumberType === initialValues.phoneNumberType && !touched.phoneNumberType) ? null : (errors.phoneNumberType ? (<div className='text-red-600'>{errors.phoneNumberType}</div>) : <FcCheckmark />)}
+            <label htmlFor='phoneNumberType'><span className='text-red-500'>*</span>Tipo de número de teléfono</label>
+            {(values.phoneNumberType === initialValues.phoneNumberType && !touched.phoneNumberType) ? null : (errors.phoneNumberType ? (<div className='text-red-500'>{errors.phoneNumberType}</div>) : <FcCheckmark />)}
           </div>
           <Field
             name='phoneNumberType'
