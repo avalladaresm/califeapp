@@ -3,7 +3,10 @@ import { useRouter } from "next/router"
 import React, { useContext, useEffect, useState } from "react"
 import MainContainer from "../../../components/client_navigation"
 import ClientPages from "../../../components/client_navigation/ClientPages"
+import NewCustomer from "../../../components/forms/NewCustomer"
+import Cotizador from "../../../components/forms/Quote"
 import PageContent from "../../../components/PageContent"
+import PlanDescription from "../../../components/PlanDescription"
 import { PlanContext } from "../../../context/PlanContext"
 import { FetchUser, useUser } from "../../../services/User"
 import { documentCookieJsonify } from "../../../utils"
@@ -34,8 +37,14 @@ const NewPlan = (props) => {
       <div className='flex flex-row space-x-3'>
         <ClientPages customerName={user.data && user.data.name} />
         <div className='w-full p-5 border border-gray-300 bg-white'>
-          {plans.isLoading ? <div>loading...</div> : <PageContent title='New Plan' planData={_selectedPlan} planDescription='asda' />}
-          {/* {JSON.stringify({ data: _selectedPlan })} */}
+          {
+            plans.isLoading ? <div>loading...</div> :
+              <PageContent title='New Plan'>
+                <PlanDescription planDescription={_selectedPlan} />
+                <Cotizador />
+                <NewCustomer />
+              </PageContent>
+          }
         </div>
       </div>
     </MainContainer>

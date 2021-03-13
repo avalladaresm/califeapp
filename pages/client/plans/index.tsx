@@ -3,6 +3,7 @@ import React from "react"
 import MainContainer from "../../../components/client_navigation"
 import ClientPages from "../../../components/client_navigation/ClientPages"
 import PageContent from "../../../components/PageContent"
+import Table from "../../../components/Table"
 import { FetchUser, useUser } from "../../../services/User"
 import { documentCookieJsonify } from "../../../utils"
 import { LoggedInUserCookieData } from "../../auth/AuthModel"
@@ -36,7 +37,15 @@ const Plans = (props) => {
       <div className='flex flex-row space-x-3'>
         <ClientPages customerName={user.data && user.data.name} />
         <div className='w-full p-5 border border-gray-300 bg-white'>
-          {planCustomer?.data ? <PageContent title='Historial de planes' data={planCustomer?.data} columns={columns} isLoading={planCustomer.isLoading} /> : 'Loading...'}
+          {
+            planCustomer?.data ?
+              <PageContent title='Historial de planes' >
+                <div className='whitespace-nowrap'>
+                  <Table columns={columns} data={planCustomer?.data} />
+                </div>
+              </PageContent> :
+              'Loading...'
+          }
         </div>
       </div>
     </MainContainer>

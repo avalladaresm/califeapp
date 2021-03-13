@@ -2,13 +2,14 @@ import { GetServerSidePropsContext } from "next"
 import React from "react"
 import MainContainer from "../../../components/admin_navigation"
 import PageContent from "../../../components/PageContent"
+import Table from "../../../components/Table"
 import { documentCookieJsonify } from "../../../utils"
 import { LoggedInUserCookieData } from "../../auth/AuthModel"
-import { FetchAccountRolesOnly, useAuth } from "../../auth/AuthService"
+import { FetchAccountRolesOnly } from "../../auth/AuthService"
 import { usePlansCustomers } from "./PlanService"
 
 const Plans = (props) => {
-  const { data, isLoading } = usePlansCustomers(props?.cookies?.a_t)
+  const { data } = usePlansCustomers(props?.cookies?.a_t)
 
   const columns = [
     {
@@ -40,7 +41,13 @@ const Plans = (props) => {
 
   return (
     <MainContainer>
-      {data ? <PageContent title={'Customers\' plans'} data={data} columns={columns} isLoading={isLoading} /> : 'Loading...'}
+      {
+        data ?
+          <PageContent title={'Customers\' plans'}>
+            <Table columns={columns} data={data} />
+          </PageContent> :
+          'Loading...'
+      }
     </MainContainer>
   )
 }
