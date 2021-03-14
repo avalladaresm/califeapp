@@ -50,6 +50,13 @@ interface NewCustomer {
   faxNumber: string,
 }
 
+interface Beneficiary {
+  beneficiaryFullname: string
+  beneficiaryKin: string
+  beneficiaryIdentificationDocument: string
+  beneficiaryPercentage: number
+}
+
 export interface OptionType {
   label: string
   value: number | string
@@ -57,9 +64,24 @@ export interface OptionType {
 
 const NewCustomer = () => {
   const [selectedDob, setSelectedDob] = useState<Date>();
-
+  const [_beneficiaries, _setBeneficiaries] = useState<Beneficiary[]>([])
+  const [_dependantsAmount, _setDependantsAmount] = useState<number>(0)
   const queryClient = useQueryClient()
   const auth: LoggedInUserCookieData = useAuth(queryClient)
+
+  const addBeneficiaryDetail = (field, beneficiaryIndex, data) => {
+    let newItems = [..._beneficiaries]
+    if (!_beneficiaries[beneficiaryIndex]) {
+      newItems.push({
+        beneficiaryFullname: '',
+        beneficiaryKin: '',
+        beneficiaryIdentificationDocument: '',
+        beneficiaryPercentage: 0
+      })
+    }
+    newItems[beneficiaryIndex][field] = data
+    _setBeneficiaries(newItems)
+  }
 
   const NewCustomerSchema = object().shape({
     firstname: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
@@ -89,7 +111,15 @@ const NewCustomer = () => {
     identificationDocumentType: string().min(6, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
     cellphoneNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!').required('Requerido!'),
     telephoneNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!').required('Requerido!'),
-    faxNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!')
+    faxNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!'),
+    beneficiaryFullName: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
+    beneficiaryKin: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
+    beneficiaryIdentificationDocument: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
+    beneficiaryPercentage: number().typeError('Solo se aceptan números!').positive('Debe ser un número positivo!'),
+    beneficiaryFullName1: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
+    beneficiaryKin1: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
+    beneficiaryIdentificationDocument1: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
+    beneficiaryPercentage1: number().typeError('Solo se aceptan números!').positive('Debe ser un número positivo!'),
   });
 
   const initialValues = {
@@ -124,24 +154,20 @@ const NewCustomer = () => {
 
     cellphoneNumber: '',
     telephoneNumber: '',
-    faxNumber: ''
-
-    /*beneficiaryFullName: '',
-   beneficiaryKin: '',
-   beneficiaryIdentificationDocument: '',
-   beneficiaryPercentage: null, */
+    faxNumber: '',
+    beneficiaries: []
   }
 
   return (
-
     <Formik
       initialValues={initialValues}
-      validationSchema={NewCustomerSchema}
+      //validationSchema={NewCustomerSchema}
       onSubmit={async (values, { resetForm }) => {
-        console.log('v', values)
         try {
           values.uid = auth.uid
           values.addressType = 'Casa'
+          values.city = 'SPS'
+          values.beneficiaries = _beneficiaries
           let res = await createCustomer(auth.a_t, values)
           if (res.status === 200) {
             console.log('yeyy')
@@ -211,62 +237,26 @@ const NewCustomer = () => {
                 touched={touched}
                 errors={errors}
               />
-
-              {/* Beneficiarios */}
-              {/* <div className='w-11/12 justify-self-center self-center mb-5' >
-                <p className='font-semibold text-2xl'>Beneficiarios</p>
-              </div>
-              <div className='flex flex-wrap mx-2 justify-evenly self-center'>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-96'>
-                  <div className='flex flex-row space-x-2 font-medium'>
-                    <label htmlFor='beneficiaryFullName'><span className='text-red-500'>*</span>Nombre Completo</label>
-                    {(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? null : (errors.beneficiaryFullName ? (<div className='text-red-500'>{errors.beneficiaryFullName}</div>) : <FcCheckmark />)}
-                  </div>
-                  <Field
-                    name='beneficiaryFullName'
-                    placeholder={!touched.beneficiaryFullName ? 'Pedro' : ''}
-                    className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? '' : (errors.beneficiaryFullName && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
-                    style={{ outline: 'none' }}
-                  />
-                </div>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-                  <div className='flex flex-row space-x-2 font-medium'>
-                    <label htmlFor='beneficiaryKin'><span className='text-red-500'>*</span>Parentesco</label>
-                    {(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? null : (errors.beneficiaryKin ? (<div className='text-red-500'>{errors.beneficiaryKin}</div>) : <FcCheckmark />)}
-                  </div>
-                  <Field
-                    name='beneficiaryKin'
-                    placeholder={!touched.beneficiaryKin ? 'Ramirez' : ''}
-                    className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? '' : (errors.beneficiaryKin && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
-                    style={{ outline: 'none' }}
-                  />
-                </div>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
-                  <div className='flex flex-row space-x-2 font-medium'>
-                    <label htmlFor='beneficiaryIdentificationDocument'><span className='text-red-500'>*</span>Documento de Identificación</label>
-                    {(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? null : (errors.beneficiaryIdentificationDocument ? (<div className='text-red-500'>{errors.beneficiaryIdentificationDocument}</div>) : <FcCheckmark />)}
-                  </div>
-                  <Field
-                    name='beneficiaryIdentificationDocument'
-                    placeholder={!touched.beneficiaryIdentificationDocument ? 'Ramirez' : ''}
-                    className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? '' : (errors.beneficiaryIdentificationDocument && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
-                    style={{ outline: 'none' }}
-                  />
-                </div>
-                <div className='flex-grow ml-2 mb-2 2xl:w-64 w-28'>
-                  <div className='flex flex-row space-x-2 font-medium'>
-                    <label htmlFor='beneficiaryPercentage'><span className='text-red-500'>*</span>Porcentaje</label>
-                    {(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? null : (errors.beneficiaryPercentage ? (<div className='text-red-500'>{errors.beneficiaryPercentage}</div>) : <FcCheckmark />)}
-                  </div>
-                  <Field
-                    name='beneficiaryPercentage'
-                    placeholder={!touched.beneficiaryPercentage ? 'Ramirez' : ''}
-                    className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? '' : (errors.beneficiaryPercentage && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
-                    style={{ outline: 'none' }}
-                  />
-                </div>
-              </div> */}
-
+              <Beneficiaries
+                values={values}
+                initialValues={initialValues}
+                touched={touched}
+                errors={errors}
+                addBeneficiaryDetail={addBeneficiaryDetail}
+              />
+              <HHealthQuestionnaire />
+              <HowManyDependants setDependantsAmount={_setDependantsAmount} />
+              <Dependants
+                dependantsAmount={_dependantsAmount}
+                values={values}
+                initialValues={initialValues}
+                touched={touched}
+                errors={errors}
+                selectedDob={selectedDob}
+                setSelectedDob={setSelectedDob}
+                setFieldValue={setFieldValue}
+                setTouched={setTouched}
+              />
             </div>
           </div>
         </Form>
@@ -277,13 +267,7 @@ const NewCustomer = () => {
 }
 
 export default NewCustomer
-{/* Questionario de salud titular */ }
-{/* <div className='w-11/12 justify-self-center self-center mb-5' >
-  <p className='font-semibold text-2xl'>Questionario de Salud del Titular</p>
-</div>
-<div className='flex flex-wrap mx-2 justify-evenly self-center'>
-  <HolderHealthQuestionnaire />
-</div> */}
+
 
 {/* Questionario de salud titular */ }
 {/* <div className='w-11/12 justify-self-center self-center mb-5' >
@@ -479,7 +463,7 @@ const GeneralInfo = ({ values, initialValues, touched, errors, selectedDob, setS
           <Field name='birthDate' type='date'
             className={`min-w-full rounded-sm h-10 p-2 ${(values.birthDate === initialValues.birthDate && !touched.birthDate) ? '' : (errors.birthDate && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
             onChange={(e) => {
-              setFieldValue('birthDate', (date && format(e.target.value, 'P')) ?? '');
+              setFieldValue('birthDate', e.target.value);
               setSelectedDob(e.target.value)
             }}
             value={selectedDob}
@@ -544,7 +528,7 @@ const Address = ({ values, initialValues, touched, errors, setFieldValue, setTou
   return (
     <div>
       <div className='w-11/12 justify-self-center self-center mb-2'>
-        <p className='font-semibold text-2xl'>Barrio o Colonia</p>
+        <p className='font-semibold text-2xl'>Dirección</p>
       </div>
       <div className='flex flex-wrap mx-2 justify-evenly self-center'>
         <div className='flex flex-wrap w-full justify-evenly align-middle'>
@@ -644,7 +628,7 @@ const Address = ({ values, initialValues, touched, errors, setFieldValue, setTou
               )}
             />
           </div>
-          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+          {/* <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
             <div className='flex flex-row space-x-2 font-medium'>
               <label htmlFor='city'><span className='text-red-500'>*</span>Municipio</label>
             </div>
@@ -658,11 +642,11 @@ const Address = ({ values, initialValues, touched, errors, setFieldValue, setTou
                   region={values.state}
                   value={values.city}
                   className={`w-full p-2 rounded-sm h-10 ${(values.city === initialValues.city && !touched.city) ? '' : (errors.city && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
-                  onChange={(v) => setFieldValue(field.name, v)}
+                  onChange={(v) => {setFieldValue(field.name, v); console.log(v)}}
                 />
               )}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
@@ -760,6 +744,220 @@ const Contact = ({ values, initialValues, touched, errors }) => {
           />
         </div>
       </div>
+    </div>
+  )
+}
+
+const Beneficiaries = ({ values, initialValues, touched, errors, addBeneficiaryDetail }) => {
+  return (
+    <div>
+      <div className='w-11/12 justify-self-center self-center mb-5' >
+        <p className='font-semibold text-2xl'>Beneficiarios</p>
+      </div>
+      <div className='flex flex-wrap mx-2 justify-evenly self-center'>
+        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-96'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='beneficiaryFullName'>Nombre Completo</label>
+            {(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? null : (errors.beneficiaryFullName ? (<div className='text-red-500'>{errors.beneficiaryFullName}</div>) : values.beneficiaryFullName?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='beneficiaryFullName' type='text'
+            placeholder={!touched.beneficiaryFullName ? 'Maria Figueroa Gómez' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryFullName === initialValues.beneficiaryFullName && !touched.beneficiaryFullName) ? '' : (errors.beneficiaryFullName && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addBeneficiaryDetail('beneficiaryFullname', 0, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='beneficiaryKin'>Parentesco</label>
+            {(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? null : (errors.beneficiaryKin ? (<div className='text-red-500'>{errors.beneficiaryKin}</div>) : values.beneficiaryKin?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='beneficiaryKin' type='text'
+            placeholder={!touched.beneficiaryKin ? 'Madre' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryKin === initialValues.beneficiaryKin && !touched.beneficiaryKin) ? '' : (errors.beneficiaryKin && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addBeneficiaryDetail('beneficiaryKin', 0, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='beneficiaryIdentificationDocument'>Documento de Identificación</label>
+            {(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? null : (errors.beneficiaryIdentificationDocument ? (<div className='text-red-500'>{errors.beneficiaryIdentificationDocument}</div>) : values.beneficiaryIdentificationDocument?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='beneficiaryIdentificationDocument' type='text'
+            placeholder={!touched.beneficiaryIdentificationDocument ? '0501988926339' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryIdentificationDocument === initialValues.beneficiaryIdentificationDocument && !touched.beneficiaryIdentificationDocument) ? '' : (errors.beneficiaryIdentificationDocument && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addBeneficiaryDetail('beneficiaryIdentificationDocument', 0, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-28'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='beneficiaryPercentage'>Porcentaje</label>
+            {(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? null : (errors.beneficiaryPercentage ? (<div className='text-red-500'>{errors.beneficiaryPercentage}</div>) : values.beneficiaryPercentage > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='beneficiaryPercentage' type='number'
+            placeholder={!touched.beneficiaryPercentage ? '100' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryPercentage === initialValues.beneficiaryPercentage && !touched.beneficiaryPercentage) ? '' : (errors.beneficiaryPercentage && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addBeneficiaryDetail('beneficiaryPercentage', 0, e.target.value)}
+          />
+        </div>
+      </div>
+      <div className='flex flex-wrap mx-2 justify-evenly self-center'>
+        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-96'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='beneficiaryFullName1'>Nombre Completo</label>
+            {(values.beneficiaryFullName1 === initialValues.beneficiaryFullName1 && !touched.beneficiaryFullName1) ? null : (errors.beneficiaryFullName1 ? (<div className='text-red-500'>{errors.beneficiaryFullName1}</div>) : values.beneficiaryFullName1?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='beneficiaryFullName1' type='text'
+            placeholder={!touched.beneficiaryFullName1 ? 'Maria Figueroa Gómez' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryFullName1 === initialValues.beneficiaryFullName1 && !touched.beneficiaryFullName1) ? '' : (errors.beneficiaryFullName1 && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addBeneficiaryDetail('beneficiaryFullname', 1, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='beneficiaryKin1'>Parentesco</label>
+            {(values.beneficiaryKin1 === initialValues.beneficiaryKin1 && !touched.beneficiaryKin1) ? null : (errors.beneficiaryKin1 ? (<div className='text-red-500'>{errors.beneficiaryKin1}</div>) : values.beneficiaryKin1?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='beneficiaryKin1' type='text'
+            placeholder={!touched.beneficiaryKin1 ? 'Madre' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryKin1 === initialValues.beneficiaryKin1 && !touched.beneficiaryKin1) ? '' : (errors.beneficiaryKin1 && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addBeneficiaryDetail('beneficiaryKin', 1, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='beneficiaryIdentificationDocument1'>Documento de Identificación</label>
+            {(values.beneficiaryIdentificationDocument1 === initialValues.beneficiaryIdentificationDocument1 && !touched.beneficiaryIdentificationDocument1) ? null : (errors.beneficiaryIdentificationDocument1 ? (<div className='text-red-500'>{errors.beneficiaryIdentificationDocument1}</div>) : values.beneficiaryIdentificationDocument1?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='beneficiaryIdentificationDocument1' type='text'
+            placeholder={!touched.beneficiaryIdentificationDocument1 ? '0501988926339' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryIdentificationDocument1 === initialValues.beneficiaryIdentificationDocument1 && !touched.beneficiaryIdentificationDocument1) ? '' : (errors.beneficiaryIdentificationDocument1 && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addBeneficiaryDetail('beneficiaryIdentificationDocument', 1, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-2 2xl:w-64 w-28'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='beneficiaryPercentage1'>Porcentaje</label>
+            {(values.beneficiaryPercentage1 === initialValues.beneficiaryPercentage1 && !touched.beneficiaryPercentage1) ? null : (errors.beneficiaryPercentage1 ? (<div className='text-red-500'>{errors.beneficiaryPercentage1}</div>) : values.beneficiaryPercentage1 > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='beneficiaryPercentage1' type='number'
+            placeholder={!touched.beneficiaryPercentage1 ? '100' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.beneficiaryPercentage1 === initialValues.beneficiaryPercentage1 && !touched.beneficiaryPercentage1) ? '' : (errors.beneficiaryPercentage1 && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addBeneficiaryDetail('beneficiaryPercentage', 1, e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const HHealthQuestionnaire = () => {
+  return (
+    <div>
+      <div className='w-full justify-self-center self-center mb-2' >
+        <p className='font-semibold text-2xl'>Questionario de Salud del Titular</p>
+      </div>
+      <div className='flex flex-wrap justify-evenly self-center'>
+        <HolderHealthQuestionnaire />
+      </div>
+    </div>
+  )
+}
+
+const DHealthQuestionnaire = (props) => {
+  return (
+    <div>
+      <div className='w-full justify-self-center self-center mb-2' >
+        <p className='font-semibold text-2xl'>Questionario de Salud del Dependiente #{props.dependant}</p>
+      </div>
+      <div className='flex flex-wrap justify-evenly self-center'>
+        <DependantHealthQuestionnaire />
+      </div>
+    </div>
+  )
+}
+
+const HowManyDependants = ({ setDependantsAmount }) => {
+  const [_dependants, _setDependants] = useState<number>(0)
+  const [_disabled, _setDisabled] = useState<boolean>(false)
+  return (
+    <div>
+      <div className='w-full justify-self-center self-center mb-2' >
+        <p className='text-lg'>¿Cuántos dependientes?</p>
+      </div>
+      <div className='flex flex-wrap space-x-3'>
+        <input type='number' disabled={_disabled} onChange={e => _setDependants(Number(e.target.value))} className='disabled:opacity-50 disabled:' />
+        <button
+          className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-lightBlue-500 hover:bg-lightBlue-600 active:bg-lightBlue-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner disabled:opacity-50'
+          type='button'
+          disabled={_disabled}
+          onClick={() => (setDependantsAmount(_dependants), _setDisabled(true))}
+        >
+          Ok
+        </button>
+      </div>
+    </div >
+  )
+}
+
+const Dependants = ({ dependantsAmount, values, initialValues, touched, errors, selectedDob, setSelectedDob, setFieldValue, setTouched }) => {
+  return (
+    <div>
+      {Array.apply(null, Array(dependantsAmount)).map((_, i) => (
+        <div key={i} className='w-full mb-10'>
+          <div className='text-2xl underline mb-3'>
+            Dependiente #{i+1}
+          </div>
+          <GeneralInfo
+            values={values}
+            initialValues={initialValues}
+            touched={touched}
+            errors={errors}
+            selectedDob={selectedDob}
+            setSelectedDob={setSelectedDob}
+            setFieldValue={setFieldValue}
+            setTouched={setTouched}
+          />
+          <Address
+            values={values}
+            initialValues={initialValues}
+            touched={touched}
+            errors={errors}
+            setFieldValue={setFieldValue}
+            setTouched={setTouched}
+          />
+          <IdentificationDocument
+            values={values}
+            initialValues={initialValues}
+            touched={touched}
+            errors={errors}
+            setFieldValue={setFieldValue}
+            setTouched={setTouched}
+          />
+          <Contact
+            values={values}
+            initialValues={initialValues}
+            touched={touched}
+            errors={errors}
+          />
+          <DHealthQuestionnaire dependant={i+1} />
+        </div>
+      ))}
     </div>
   )
 }

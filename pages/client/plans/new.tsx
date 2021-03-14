@@ -39,7 +39,7 @@ const NewPlan = (props) => {
         <div className='w-full p-5 border border-gray-300 bg-white'>
           {
             plans.isLoading ? <div>loading...</div> :
-              <PageContent title='New Plan'>
+              <PageContent title={`Nuevo Plan - ${_selectedPlan?.name}`}>
                 <PlanDescription planDescription={_selectedPlan} />
                 <Cotizador />
                 <NewCustomer />
