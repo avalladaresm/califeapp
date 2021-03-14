@@ -24,7 +24,7 @@ interface NewCustomer {
   secondSurname: string,
   surnameAfterMarried: string,
   email: string,
-  gender: number,
+  gender: string,
   birthDate: string,
   maritalStatus: string,
   occupation: string,
@@ -38,6 +38,40 @@ interface NewCustomer {
   street: string,
   block: number,
   houseNumber: number,
+  city: string,
+  state: string,
+  country: string,
+
+  identificationDocument: string,
+  identificationDocumentType: string,
+
+  cellphoneNumber: string,
+  telephoneNumber: string,
+  faxNumber: string,
+}
+
+interface Dependant {
+  firstname: string,
+  middlename: string,
+  firstSurname: string,
+  secondSurname: string,
+  surnameAfterMarried: string,
+  email: string,
+  gender: string,
+  birthDate: string,
+  maritalStatus: string,
+  occupation: string,
+  weight: number,
+  height: number,
+  worksAt: string,
+  workAddress: string,
+
+  neighborhood: string,
+  avenue: string,
+  street: string,
+  block: number,
+  houseNumber: number,
+  addressType: string,
   city: string,
   state: string,
   country: string,
@@ -65,7 +99,9 @@ export interface OptionType {
 const NewCustomer = () => {
   const [selectedDob, setSelectedDob] = useState<Date>();
   const [_beneficiaries, _setBeneficiaries] = useState<Beneficiary[]>([])
+  const [_dependants, _setDependants] = useState<Dependant[]>([])
   const [_dependantsAmount, _setDependantsAmount] = useState<number>(0)
+
   const queryClient = useQueryClient()
   const auth: LoggedInUserCookieData = useAuth(queryClient)
 
@@ -81,6 +117,44 @@ const NewCustomer = () => {
     }
     newItems[beneficiaryIndex][field] = data
     _setBeneficiaries(newItems)
+  }
+
+  const addDependantDetail = (field, dependantIndex, data) => {
+    let newItems = [..._dependants]
+    if (!_dependants[dependantIndex]) {
+      newItems.push({
+        firstname: '',
+        middlename: '',
+        firstSurname: '',
+        secondSurname: '',
+        surnameAfterMarried: '',
+        email: '',
+        gender: '',
+        birthDate: '',
+        maritalStatus: '',
+        occupation: '',
+        weight: null,
+        height: null,
+        worksAt: '',
+        workAddress: '',
+        neighborhood: '',
+        avenue: '',
+        street: '',
+        block: null,
+        houseNumber: null,
+        addressType: 'Casa',
+        city: '',
+        state: '',
+        country: '',
+        identificationDocument: '',
+        identificationDocumentType: '',
+        cellphoneNumber: '',
+        telephoneNumber: '',
+        faxNumber: '',
+      })
+    }
+    newItems[dependantIndex][field] = data
+    _setDependants(newItems)
   }
 
   const NewCustomerSchema = object().shape({
@@ -120,6 +194,35 @@ const NewCustomer = () => {
     beneficiaryKin1: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
     beneficiaryIdentificationDocument1: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
     beneficiaryPercentage1: number().typeError('Solo se aceptan números!').positive('Debe ser un número positivo!'),
+
+    dependantFirstname: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantMiddlename: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantFirstSurname: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantSecondSurname: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantSurnameAfterMarried: string().min(2, 'Muy corto!').max(255, 'Muy largo!'),
+    dependantEmail: string().email('Correo inválido'),
+    dependantGender: string().required('Requerido!'),
+    dependantBirthDate: date().max(subYears(new Date(), 18), 'Tienes que tener al menos 18 años de edad!').required('Requerido!'),
+    dependantMaritalStatus: string().required('Requerido!'),
+    dependantOccupation: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantWeight: number().typeError('Solo se aceptan números!').positive('Debe ser un número positivo!').required('Requerido!'),
+    dependantHeight: number().typeError('Solo se aceptan números!').positive('Debe ser un número positivo!').max(3, 'Estatura debe ser en metros!').required('Requerido!'),
+    dependantWorksAt: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantWorkAddress: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantNeighborhood: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantAvenue: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantStreet: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantBlock: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantHouseNumber: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantAddressType: string().min(2, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantCity: string().required('Requerido!'),
+    dependantState: string().required('Requerido!'),
+    dependantCountry: string().required('Requerido!'),
+    dependantIdentificationDocument: string().min(6, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantIdentificationDocumentType: string().min(6, 'Muy corto!').max(255, 'Muy largo!').required('Requerido!'),
+    dependantCellphoneNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!').required('Requerido!'),
+    dependantTelephoneNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!').required('Requerido!'),
+    dependantFaxNumber: string().min(6, 'Muy corto!').max(25, 'Muy largo!')
   });
 
   const initialValues = {
@@ -155,7 +258,8 @@ const NewCustomer = () => {
     cellphoneNumber: '',
     telephoneNumber: '',
     faxNumber: '',
-    beneficiaries: []
+    beneficiaries: [],
+    dependants: []
   }
 
   return (
@@ -168,9 +272,11 @@ const NewCustomer = () => {
           values.addressType = 'Casa'
           values.city = 'SPS'
           values.beneficiaries = _beneficiaries
+          values.dependants = _dependants
+          
           let res = await createCustomer(auth.a_t, values)
           if (res.status === 200) {
-            console.log('yeyy')
+            console.log('yeyy', values)
             store.addNotification({
               message: `El cliente se creó exitósamente.`,
               type: 'success',
@@ -248,6 +354,7 @@ const NewCustomer = () => {
               <HowManyDependants setDependantsAmount={_setDependantsAmount} />
               <Dependants
                 dependantsAmount={_dependantsAmount}
+                addDependantDetail={addDependantDetail}
                 values={values}
                 initialValues={initialValues}
                 touched={touched}
@@ -915,15 +1022,17 @@ const HowManyDependants = ({ setDependantsAmount }) => {
   )
 }
 
-const Dependants = ({ dependantsAmount, values, initialValues, touched, errors, selectedDob, setSelectedDob, setFieldValue, setTouched }) => {
+const Dependants = ({ dependantsAmount, addDependantDetail, values, initialValues, touched, errors, selectedDob, setSelectedDob, setFieldValue, setTouched }) => {
   return (
     <div>
       {Array.apply(null, Array(dependantsAmount)).map((_, i) => (
         <div key={i} className='w-full mb-10'>
           <div className='text-2xl underline mb-3'>
-            Dependiente #{i+1}
+            Dependiente #{i + 1}
           </div>
-          <GeneralInfo
+          <DependantGeneralInfo
+            dependantIndex={i}
+            addDependantDetail={addDependantDetail}
             values={values}
             initialValues={initialValues}
             touched={touched}
@@ -933,7 +1042,9 @@ const Dependants = ({ dependantsAmount, values, initialValues, touched, errors, 
             setFieldValue={setFieldValue}
             setTouched={setTouched}
           />
-          <Address
+          <DependantAddress
+            dependantIndex={i}
+            addDependantDetail={addDependantDetail}
             values={values}
             initialValues={initialValues}
             touched={touched}
@@ -941,7 +1052,9 @@ const Dependants = ({ dependantsAmount, values, initialValues, touched, errors, 
             setFieldValue={setFieldValue}
             setTouched={setTouched}
           />
-          <IdentificationDocument
+          <DependantIdentificationDocument
+            dependantIndex={i}
+            addDependantDetail={addDependantDetail}
             values={values}
             initialValues={initialValues}
             touched={touched}
@@ -949,15 +1062,483 @@ const Dependants = ({ dependantsAmount, values, initialValues, touched, errors, 
             setFieldValue={setFieldValue}
             setTouched={setTouched}
           />
-          <Contact
+          <DependantContact
+            dependantIndex={i}
+            addDependantDetail={addDependantDetail}
             values={values}
             initialValues={initialValues}
             touched={touched}
             errors={errors}
           />
-          <DHealthQuestionnaire dependant={i+1} />
+          <DHealthQuestionnaire dependant={i + 1} />
         </div>
       ))}
+    </div>
+  )
+}
+
+const DependantGeneralInfo = ({ dependantIndex, addDependantDetail, values, initialValues, touched, errors, selectedDob, setSelectedDob, setFieldValue, setTouched }) => {
+  return (
+    <div>
+      <div className='w-11/12 justify-self-center self-center mb-2' >
+        <p className='font-semibold text-2xl'>Datos Personales</p>
+      </div>
+      <div className='flex flex-wrap mx-2 justify-evenly self-center'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantFirstname'><span className='text-red-500'>*</span>Primer nombre</label>
+            {(values.dependantFirstname === initialValues.dependantFirstname && !touched.dependantFirstname) ? null : (errors.dependantFirstname ? (<div className='text-red-500'>{errors.dependantFirstname}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantFirstname' type='text'
+            placeholder={!touched.dependantFirstname ? 'Pedro' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantFirstname === initialValues.dependantFirstname && !touched.dependantFirstname) ? '' : (errors.dependantFirstname && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantFirstname', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantMiddlename'><span className='text-red-500'>*</span>Segundo nombre</label>
+            {(values.dependantMiddlename === initialValues.dependantMiddlename && !touched.dependantMiddlename) ? null : (errors.dependantMiddlename ? (<div className='text-red-500'>{errors.dependantMiddlename}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantMiddlename' type='text'
+            placeholder={!touched.dependantMiddlename ? 'Alberto' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantMiddlename === initialValues.dependantMiddlename && !touched.dependantMiddlename) ? '' : (errors.dependantMiddlename && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantMiddlename', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantFirstSurname'><span className='text-red-500'>*</span>Primer apellido</label>
+            {(values.dependantFirstSurname === initialValues.dependantFirstSurname && !touched.dependantFirstSurname) ? null : (errors.dependantFirstSurname ? (<div className='text-red-500'>{errors.dependantFirstSurname}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantFirstSurname' type='text'
+            placeholder={!touched.dependantFirstSurname ? 'Pascal' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantFirstSurname === initialValues.dependantFirstSurname && !touched.dependantFirstSurname) ? '' : (errors.dependantFirstSurname && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantFirstSurname', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantSecondSurname'><span className='text-red-500'>*</span>Segundo apellido</label>
+            {(values.dependantSecondSurname === initialValues.dependantSecondSurname && !touched.dependantSecondSurname) ? null : (errors.dependantSecondSurname ? (<div className='text-red-500'>{errors.dependantSecondSurname}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantSecondSurname' type='text'
+            placeholder={!touched.dependantSecondSurname ? 'Figueroa' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantSecondSurname === initialValues.dependantSecondSurname && !touched.dependantSecondSurname) ? '' : (errors.dependantSecondSurname && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantSecondSurname', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantSurnameAfterMarried'>Apellido de casada</label>
+            {(values.dependantSurnameAfterMarried === initialValues.dependantSurnameAfterMarried && !touched.dependantSurnameAfterMarried) ? null : (errors.dependantSurnameAfterMarried ? (<div className='text-red-500'>{errors.dependantSurnameAfterMarried}</div>) : values.dependantSurnameAfterMarried?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantSurnameAfterMarried' type='text'
+            placeholder={!touched.dependantSurnameAfterMarried ? 'López' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantSurnameAfterMarried === initialValues.dependantSurnameAfterMarried && !touched.dependantSurnameAfterMarried) ? '' : (errors.dependantSurnameAfterMarried && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantSurnameAfterMarried', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantEmail'>Email</label>
+            {(values.dependantEmail === initialValues.dependantEmail && !touched.dependantEmail) ? null : (errors.dependantEmail ? (<div className='text-red-500'>{errors.dependantEmail}</div>) : values.dependantEmail?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantEmail' type='email'
+            placeholder={!touched.dependantEmail ? 'pedro@gmail.com' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantEmail === initialValues.dependantEmail && !touched.dependantEmail) ? '' : (errors.dependantEmail && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantEmail', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantGender'><span className='text-red-500'>*</span>Sexo</label>
+            {(values.dependantGender === initialValues.dependantGender && !touched.dependantGender) ? null : (errors.dependantGender ? (<div className='text-red-500'>{errors.dependantGender}</div>) : <FcCheckmark />)}
+          </div>
+          <Field name='dependantGender'
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantGender === initialValues.dependantGender && !touched.dependantGender) ? '' : (errors.dependantGender && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            children={({ field }) => (
+              <select name='dependantGender' id='dependantGender'
+                className={`min-w-full rounded-sm h-10 ${(values.dependantGender === initialValues.dependantGender && !touched.dependantGender) ? '' : (errors.dependantGender && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+                onChange={v => {
+                  setFieldValue(field.name, v.target.value);
+                  addDependantDetail('dependantGender', dependantIndex, v.target.value)
+                }}
+                onBlur={() => setTouched({ ...touched, gender: true })}
+              >
+                <option value=''>Seleccione su sexo</option>
+                <option value='Femenino'>Femenino</option>
+                <option value='Masculino'>Masculino</option>
+              </select>
+            )}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantMaritalStatus'><span className='text-red-500'>*</span>Estado Civil</label>
+            {(values.dependantMaritalStatus === initialValues.dependantMaritalStatus && !touched.dependantMaritalStatus) ? null : (errors.dependantMaritalStatus ? (<div className='text-red-500'>{errors.dependantMaritalStatus}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantMaritalStatus'
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantMaritalStatus === initialValues.dependantMaritalStatus && !touched.dependantMaritalStatus) ? '' : (errors.dependantMaritalStatus && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            children={({ field }) => (
+              <select name='dependantMaritalStatus' id='dependantMaritalStatus'
+                className={`min-w-full rounded-sm h-10 ${(values.dependantMaritalStatus === initialValues.dependantMaritalStatus && !touched.dependantMaritalStatus) ? '' : (errors.dependantMaritalStatus && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+                onChange={v => {
+                  setFieldValue(field.name, v.target.value);
+                  addDependantDetail('dependantMaritalStatus', dependantIndex, v.target.value)
+                }}
+                onBlur={() => setTouched({ ...touched, maritalStatus: true })}
+              >
+                <option value=''>Seleccione su estado civil</option>
+                <option value='Casado'>Casado (a)</option>
+                <option value='Soltero'>Soltero (a)</option>
+                <option value='Otro'>Otro (s)</option>
+              </select>
+            )}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantOccupation'><span className='text-red-500'>*</span>Ocupación</label>
+            {(values.dependantOccupation === initialValues.dependantOccupation && !touched.dependantOccupation) ? null : (errors.dependantOccupation ? (<div className='text-red-500'>{errors.dependantOccupation}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantOccupation' type='text'
+            placeholder={!touched.dependantOccupation ? 'Ingeniero' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantOccupation === initialValues.dependantOccupation && !touched.dependantOccupation) ? '' : (errors.dependantOccupation && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantOccupation', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantBirthDate'><span className='text-red-500'>*</span>Fecha de Nacimiento</label>
+            {(values.dependantBirthDate === initialValues.dependantBirthDate && !touched.dependantBirthDate) ? null : (errors.dependantBirthDate ? (<div className='text-red-500'>{errors.dependantBirthDate}</div>) : <FcCheckmark />)}
+          </div>
+          <Field name='dependantBirthDate' type='date'
+            className={`min-w-full rounded-sm h-10 p-2 ${(values.dependantBirthDate === initialValues.dependantBirthDate && !touched.dependantBirthDate) ? '' : (errors.dependantBirthDate && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            onChange={(e) => {
+              setFieldValue('dependantBirthDate', e.target.value);
+              setSelectedDob(e.target.value)
+              addDependantDetail('dependantBirthDate', dependantIndex, e.target.value)
+            }}
+            value={selectedDob}
+            onBlur={() => setTouched({ ...touched, dependantBirthDate: true })}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantWeight'><span className='text-red-500'>*</span>Peso (en lb)</label>
+            {(values.dependantWeight === initialValues.dependantWeight && !touched.dependantWeight) ? null : (errors.dependantWeight ? (<div className='text-red-500'>{errors.dependantWeight}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantWeight' type='number'
+            placeholder={!touched.dependantWeight ? 'Ingeniero' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantWeight === initialValues.dependantWeight && !touched.dependantWeight) ? '' : (errors.dependantWeight && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantWeight', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantHeight'><span className='text-red-500'>*</span>Estatura (en m)</label>
+            {(values.dependantHeight === initialValues.dependantHeight && !touched.dependantHeight) ? null : (errors.dependantHeight ? (<div className='text-red-500'>{errors.dependantHeight}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantHeight' type='number'
+            placeholder={!touched.dependantHeight ? 'Ingeniero' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantHeight === initialValues.dependantHeight && !touched.dependantHeight) ? '' : (errors.dependantHeight && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantHeight', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantWorksAt'><span className='text-red-500'>*</span>Lugar de Trabajo</label>
+            {(values.dependantWorksAt === initialValues.dependantWorksAt && !touched.dependantWorksAt) ? null : (errors.dependantWorksAt ? (<div className='text-red-500'>{errors.dependantWorksAt}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantWorksAt' type='text'
+            placeholder={!touched.dependantWorksAt ? 'Eterna S.A.' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantWorksAt === initialValues.dependantWorksAt && !touched.dependantWorksAt) ? '' : (errors.dependantWorksAt && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantWorksAt', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantWorkAddress'><span className='text-red-500'>*</span>Dirección de Trabajo</label>
+            {(values.dependantWorkAddress === initialValues.dependantWorkAddress && !touched.dependantWorkAddress) ? null : (errors.dependantWorkAddress ? (<div className='text-red-500'>{errors.dependantWorkAddress}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantWorkAddress' type='text'
+            placeholder={!touched.dependantWorkAddress ? 'San Pedro Sula' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantWorkAddress === initialValues.dependantWorkAddress && !touched.dependantWorkAddress) ? '' : (errors.dependantWorkAddress && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantWorkAddress', dependantIndex, e.target.value)}
+          />
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+const DependantAddress = ({ dependantIndex, addDependantDetail, values, initialValues, touched, errors, setFieldValue, setTouched }) => {
+  return (
+    <div>
+      <div className='w-11/12 justify-self-center self-center mb-2'>
+        <p className='font-semibold text-2xl'>Dirección</p>
+      </div>
+      <div className='flex flex-wrap mx-2 justify-evenly self-center'>
+        <div className='flex flex-wrap w-full justify-evenly align-middle'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
+              <label htmlFor='dependantNeighborhood'><span className='text-red-500'>*</span>Colonia o Barrio</label>
+              {(values.dependantNeighborhood === initialValues.dependantNeighborhood && !touched.dependantNeighborhood) ? null : (errors.dependantNeighborhood ? (<div className='text-red-500'>{errors.dependantNeighborhood}</div>) : <FcCheckmark />)}
+            </div>
+            <Field
+              name='dependantNeighborhood' type='text'
+              placeholder={!touched.dependantNeighborhood ? 'Colonia Las Flores' : ''}
+              className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantNeighborhood === initialValues.dependantNeighborhood && !touched.dependantNeighborhood) ? '' : (errors.dependantNeighborhood && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+              style={{ outline: 'none' }}
+              onChange={(e) => addDependantDetail('dependantNeighborhood', dependantIndex, e.target.value)}
+            />
+          </div>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
+              <label htmlFor='dependantStreet'><span className='text-red-500'>*</span>Calle</label>
+              {(values.dependantStreet === initialValues.dependantStreet && !touched.dependantStreet) ? null : (errors.dependantStreet ? (<div className='text-red-500'>{errors.dependantStreet}</div>) : <FcCheckmark />)}
+            </div>
+            <Field
+              name='dependantStreet' type='text'
+              placeholder={!touched.dependantStreet ? 'Pedro' : ''}
+              className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantStreet === initialValues.dependantStreet && !touched.dependantStreet) ? '' : (errors.dependantStreet && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+              style={{ outline: 'none' }}
+              onChange={(e) => addDependantDetail('dependantStreet', dependantIndex, e.target.value)}
+            />
+          </div>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
+              <label htmlFor='dependantAvenue'><span className='text-red-500'>*</span>Avenida</label>
+              {(values.dependantAvenue === initialValues.dependantAvenue && !touched.dependantAvenue) ? null : (errors.dependantAvenue ? (<div className='text-red-500'>{errors.dependantAvenue}</div>) : <FcCheckmark />)}
+            </div>
+            <Field
+              name='dependantAvenue' type='text'
+              placeholder={!touched.dependantAvenue ? 'Pedro' : ''}
+              className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantAvenue === initialValues.dependantAvenue && !touched.dependantAvenue) ? '' : (errors.dependantAvenue && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+              style={{ outline: 'none' }}
+              onChange={(e) => addDependantDetail('dependantAvenue', dependantIndex, e.target.value)}
+            />
+          </div>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
+              <label htmlFor='dependantBlock'>Bloque</label>
+            </div>
+            <Field
+              name='dependantBlock' type='text'
+              placeholder={!touched.dependantBlock ? 'Pedro' : ''}
+              className={`min-w-full p-2 rounded-sm h-10`}
+              style={{ outline: 'none' }}
+              onChange={(e) => addDependantDetail('dependantBlock', dependantIndex, e.target.value)}
+            />
+          </div>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
+              <label htmlFor='dependantHouseNumber'>No. de Casa</label>
+            </div>
+            <Field
+              name='dependantHouseNumber' type='text'
+              placeholder={!touched.dependantHouseNumber ? 'Pedro' : ''}
+              className={`min-w-full p-2 rounded-sm h-10`}
+              style={{ outline: 'none' }}
+              onChange={(e) => addDependantDetail('dependantHouseNumber', dependantIndex, e.target.value)}
+            />
+          </div>
+        </div>
+        <div className='flex flex-wrap w-full justify-evenly align-middle'>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
+              <label htmlFor='dependantCountry'><span className='text-red-500'>*</span>País</label>
+            </div>
+            <Field
+              name='dependantCountry'
+              onTouch={() => setTouched({ ...touched, dependantCountry: true })}
+              children={({ field }) => (
+                <CountryDropdown
+                  {...field}
+                  value={values.dependantCountry}
+                  priorityOptions={['HN']}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.dependantCountry === initialValues.dependantCountry && !touched.dependantCountry) ? '' : (errors.dependantCountry && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+                  onChange={(v) => {
+                    setFieldValue(field.name, v)
+                    addDependantDetail('dependantCountry', dependantIndex, v)
+                  }}
+                />
+              )}
+            />
+          </div>
+          <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
+              <label htmlFor='dependantState'><span className='text-red-500'>*</span>Departamento</label>
+            </div>
+            <Field
+              name='dependantState'
+              onTouch={() => setTouched({ ...touched, dependantState: true })}
+              children={({ field }) => (
+                <RegionDropdown
+                  {...field}
+                  country={values.country}
+                  value={values.dependantState}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.dependantState === initialValues.dependantState && !touched.dependantState) ? '' : (errors.dependantState && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+                  onChange={(v) => {
+                    setFieldValue(field.name, v)
+                    addDependantDetail('dependantState', dependantIndex, v)
+                  }}
+                />
+              )}
+            />
+          </div>
+          {/* <div className='flex-grow ml-2 mb-5 w-full sm:w-auto'>
+            <div className='flex flex-row space-x-2 font-medium'>
+              <label htmlFor='dependantCity'><span className='text-red-500'>*</span>Municipio</label>
+            </div>
+            <Field
+              name='dependantCity'
+              onTouch={() => setTouched({ ...touched, dependantCity: true })}
+              children={({ field }) => (
+                <MunicipalityDropdown
+                  {...field}
+                  country={values.country}
+                  region={values.state}
+                  value={values.dependantCity}
+                  className={`w-full p-2 rounded-sm h-10 ${(values.dependantCity === initialValues.dependantCity && !touched.dependantCity) ? '' : (errors.dependantCity && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+                  onChange={(v) => {
+                    setFieldValue(field.name, v); 
+                    addDependantDetail('dependantCity', dependantIndex, v.target.value)
+                    console.log(v)
+                  }}
+                />
+              )}
+            />
+          </div> */}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const DependantIdentificationDocument = ({ dependantIndex, addDependantDetail, values, initialValues, touched, errors, setFieldValue, setTouched }) => {
+  return (
+    <div>
+      <div className='w-11/12 justify-self-center self-center mb-2'>
+        <p className='font-semibold text-2xl'>Identificación</p>
+      </div>
+      <div className='flex flex-wrap mx-2 justify-evenly self-center'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantIdentificationDocument'><span className='text-red-500'>*</span>Documento de Identificación</label>
+            {(values.dependantIdentificationDocument === initialValues.dependantIdentificationDocument && !touched.dependantIdentificationDocument) ? null : (errors.dependantIdentificationDocument ? (<div className='text-red-500'>{errors.dependantIdentificationDocument}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantIdentificationDocument' type='text'
+            placeholder={!touched.dependantIdentificationDocument ? '0501983484839' : '0501983484839'}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantIdentificationDocument === initialValues.dependantIdentificationDocument && !touched.dependantIdentificationDocument) ? '' : (errors.dependantIdentificationDocument && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantIdentificationDocument', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantIdentificationDocumentType'><span className='text-red-500'>*</span>Tipo de Documento de Identificación</label>
+            {(values.dependantIdentificationDocumentType === initialValues.dependantIdentificationDocumentType && !touched.dependantIdentificationDocumentType) ? null : (errors.dependantIdentificationDocumentType ? (<div className='text-red-500'>{errors.dependantIdentificationDocumentType}</div>) : <FcCheckmark />)}
+          </div>
+          <Field name='dependantIdentificationDocumentType'
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantIdentificationDocumentType === initialValues.dependantIdentificationDocumentType && !touched.dependantIdentificationDocumentType) ? '' : (errors.dependantIdentificationDocumentType && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            children={({ field }) => (
+              <select name='dependantIdentificationDocumentType' id='dependantIdentificationDocumentType'
+                className={`min-w-full rounded-sm h-10 ${(values.dependantIdentificationDocumentType === initialValues.dependantIdentificationDocumentType && !touched.dependantIdentificationDocumentType) ? '' : (errors.dependantIdentificationDocumentType && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+                onChange={v => {
+                  setFieldValue(field.name, v.target.value);
+                  addDependantDetail('dependantIdentificationDocumentType', dependantIndex, v.target.value)
+                }}
+                onBlur={() => setTouched({ ...touched, identificationDocumentType: true })}
+              >
+                <option value=''>Seleccione el tipo de ID</option>
+                <option value='Cédula de Identidad'>Cédula de Identidad</option>
+                <option value='Pasaporte'>Pasaporte</option>
+              </select>
+            )}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const DependantContact = ({ dependantIndex, addDependantDetail, values, initialValues, touched, errors }) => {
+  return (
+    <div>
+      <div className='w-11/12 justify-self-center self-center mb-2'>
+        <p className='font-semibold text-2xl'>Contacto</p>
+      </div>
+      <div className='flex flex-wrap mx-2 justify-evenly self-center'>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantCellphoneNumber'><span className='text-red-500'>*</span>Número de celular</label>
+            {(values.dependantCellphoneNumber === initialValues.dependantCellphoneNumber && !touched.dependantCellphoneNumber) ? null : (errors.dependantCellphoneNumber ? (<div className='text-red-500'>{errors.dependantCellphoneNumber}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantCellphoneNumber' type='tel'
+            placeholder={!touched.dependantCellphoneNumber ? '98190572' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantCellphoneNumber === initialValues.dependantCellphoneNumber && !touched.dependantCellphoneNumber) ? '' : (errors.dependantCellphoneNumber && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantCellphoneNumber', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantTelephoneNumber'><span className='text-red-500'>*</span>Teléfono de casa</label>
+            {(values.dependantTelephoneNumber === initialValues.dependantTelephoneNumber && !touched.dependantTelephoneNumber) ? null : (errors.dependantTelephoneNumber ? (<div className='text-red-500'>{errors.dependantTelephoneNumber}</div>) : <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantTelephoneNumber' type='tel'
+            placeholder={!touched.dependantTelephoneNumber ? '25029039' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantTelephoneNumber === initialValues.dependantTelephoneNumber && !touched.dependantTelephoneNumber) ? '' : (errors.dependantTelephoneNumber && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantTelephoneNumber', dependantIndex, e.target.value)}
+          />
+        </div>
+        <div className='flex-grow ml-2 mb-5 2xl:w-64 w-64'>
+          <div className='flex flex-row space-x-2 font-medium'>
+            <label htmlFor='dependantFaxNumber'>Número de fax</label>
+            {(values.dependantFaxNumber === initialValues.dependantFaxNumber && !touched.dependantFaxNumber) ? null : (errors.dependantFaxNumber ? (<div className='text-red-500'>{errors.dependantFaxNumber}</div>) : values.dependantFaxNumber?.length > 0 && <FcCheckmark />)}
+          </div>
+          <Field
+            name='dependantFaxNumber' type='tel'
+            placeholder={!touched.dependantFaxNumber ? '22903902' : ''}
+            className={`min-w-full p-2 rounded-sm h-10 ${(values.dependantFaxNumber === initialValues.dependantFaxNumber && !touched.dependantFaxNumber) ? '' : (errors.dependantFaxNumber && 'ring-1 focus:ring-1 ring-red-500 focus:ring-red-500')}`}
+            style={{ outline: 'none' }}
+            onChange={(e) => addDependantDetail('dependantFaxNumber', dependantIndex, e.target.value)}
+          />
+        </div>
+      </div>
     </div>
   )
 }
