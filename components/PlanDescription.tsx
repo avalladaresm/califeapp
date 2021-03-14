@@ -1,42 +1,44 @@
 const PlanDescription = (props) => {
 
+  const description = [
+    {
+      header: 'Cobertura',
+      data: [`L. ${props.planDescription?.coverage.toLocaleString('en-US')}`]
+    }, {
+      header: 'Maternidad',
+      data: [
+        `Precio: L. ${props.planDescription?.maternityPrice.toLocaleString('en-US')}`,
+        `Cobertura por cesárea: L. ${props.planDescription?.maternityCesareaCober.toLocaleString('en-US')}`,
+        `Cobertura por parto: L. ${props.planDescription?.maternityPartoCober.toLocaleString('en-US')}`
+      ]
+    }, {
+      header: 'Beneficios',
+      data: [
+        props.planDescription?.notesRTFBenefits
+      ]
+    }
+
+  ]
+
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-      <div className="px-4 py-5 sm:px-6">
-        <h3 className="text-lg leading-6 font-medium">
+    <div className='bg-white overflow-hidden sm:rounded-sm border border-gray-300'>
+      <div className='px-4 py-5 sm:px-6'>
+        <h3 className='text-xl font-medium'>
           Información del Plan
         </h3>
       </div>
-      <div className="border-t border-gray-200">
+      <div className='border-t border-gray-200'>
         <dl>
-          <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium">
-              Cobertura
-            </dt>
-            <dd className="text-sm sm:mt-0 sm:col-span-2">
-              L. {props.planDescription?.coverage.toLocaleString('en-US')}
-            </dd>
-          </div>
-          <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium">
-              Maternidad
-            </dt>
-            <dd className="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              <ul>
-                <li>Precio: {props.planDescription?.maternityPrice.toLocaleString('en-US')}</li>
-                <li>Cobertura por cesárea: {props.planDescription?.maternityCesareaCober.toLocaleString('en-US')}</li>
-                <li>Cobertura por parto: {props.planDescription?.maternityPartoCober.toLocaleString('en-US')}</li>
-              </ul>
-            </dd>
-          </div>
-          <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt className="text-sm font-medium">
-              Beneficios
-            </dt>
-            <dd className="mt-1 text-sm sm:mt-0 sm:col-span-2">
-              {props.planDescription?.notesRTFBenefits}
-            </dd>
-          </div>
+          {description.map((d, i) => (
+            <div className={`px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 ${i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+              <dt className='text-base font-medium'>
+                {d.header}
+              </dt>
+              <dd className='flex flex-row justify-evenly text-base sm:mt-0 sm:col-span-2'>
+                {d.data.map((dd, j) => <div>{dd}</div>)}
+              </dd>
+            </div>
+          ))}
         </dl>
       </div>
     </div>
