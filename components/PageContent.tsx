@@ -10,8 +10,8 @@ const PageContent = (props) => {
         </div>
         <Button title='Create' type='create' />
       </div>
-      <div className='flex w-full h-auto rounded-md border border-blueGray-300 bg-white'>
-        <div className='p-4 w-full h-auto'>
+      <div className='flex w-full h-auto bg-white'>
+        <div className='p-4 w-full h-auto space-y-10'>
           {props.children}
         </div>
       </div>
