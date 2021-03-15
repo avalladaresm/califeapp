@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react"
 import MainContainer from "../../../components/client_navigation"
 import ClientPages from "../../../components/client_navigation/ClientPages"
 import NewCustomer from "../../../components/forms/NewCustomer"
-import Cotizador from "../../../components/forms/Quote"
+import Quote from "../../../components/forms/Quote"
 import PageContent from "../../../components/PageContent"
 import PlanDescription from "../../../components/PlanDescription"
 import { PlanContext } from "../../../context/PlanContext"
@@ -41,7 +41,7 @@ const NewPlan = (props) => {
             plans.isLoading ? <div>loading...</div> :
               <PageContent title={`Nuevo Plan - ${_selectedPlan?.name}`}>
                 <PlanDescription planDescription={_selectedPlan} />
-                <Cotizador />
+                <Quote />
                 <NewCustomer />
               </PageContent>
           }
