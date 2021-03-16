@@ -3,7 +3,6 @@ import MainContainer from "../../../components/admin_navigation"
 import { useQuickQuotes } from "../../../services/QuickQuote"
 import { documentCookieJsonify } from "../../../utils"
 import { LoggedInUserCookieData } from "../../auth/AuthModel"
-import UnreadQuickQuotes from "./UnreadQuickQuotes"
 
 const Dashboard = (props) => {
   const { data } = useQuickQuotes(props?.cookies?.a_t)
@@ -11,7 +10,7 @@ const Dashboard = (props) => {
   return (
     <MainContainer>
       <div className='flex justify-center'>
-        <UnreadQuickQuotes quickQuotes={data} />
+        Quick quotes!!!!!!!!!!
       </div>
     </MainContainer>
   )

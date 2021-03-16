@@ -3,6 +3,8 @@ import { differenceInMonths, differenceInYears } from 'date-fns'
 import { RatePlan, RATE_PLAN_ADDER, RATE_PLAN_MULTIPLIER, CARNET_PRICE, MaternityPrices } from '../../constants';
 import { PlanContext } from '../../context/PlanContext';
 import { PlanTypes } from '../../models/index'
+import { createQuickQuote } from '../../services/QuickQuote';
+import { useAuth } from '../../pages/auth/AuthService';
 
 interface Children {
   children: number
@@ -37,6 +39,8 @@ const Quote = () => {
   const [_paymentRecurrence, _setPaymentRecurrence] = useState<PaymentRecurrence>();
   const [_calculatedResult, _setCalculatedResult] = useState([]);
 
+  const auth = useAuth(queryClient)
+
   const selectedPlan = useContext(PlanContext)
   console.log('calculated', _calculatedResult, _lifeInsurance)
   const quoteData: QuoteData = {
@@ -68,6 +72,7 @@ const Quote = () => {
               setCalculatedResult={_setCalculatedResult}
               quoteData={quoteData}
               selectedPlan={selectedPlan}
+              auth={auth}
             />
             <QuoteResult calculatedResult={_calculatedResult} />
           </div>
@@ -262,14 +267,15 @@ const PaymentRecurrence = ({ setRecurrence }) => {
   )
 }
 
-const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan }) => {
+const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, auth }) => {
   const { PLAN_PLATA, PLAN_ORO, PLAN_PLATINUM } = PlanTypes
   const { SILVER, GOLD, PLATINUM } = MaternityPrices
   const { holderDob, partnerDob, children, lifeInsurance, maternity, paymentRecurrence }: QuoteData = quoteData
   let carnets = 0
   const result = []
+  const currentQuote = {}
 
-  const calculateQuote = () => {
+  const calculateQuote = async () => {
     carnets = carnets + 1
     const holderAgeInYears = differenceInYears(new Date(), new Date(holderDob))
     const holderAgeInMonths = differenceInMonths(new Date(), new Date(holderDob))
@@ -337,6 +343,25 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan }) => {
       result.push({ description: 'Maternidad', quantity: 1, amount: maternityPrice, totalAmount: maternityPrice })
     }
 
+    let lifeInsuranceId = null
+    switch (lifeInsurance.coverage) {
+      case 50000:
+        lifeInsuranceId = 1
+        break
+      case 100000:
+        lifeInsuranceId = 2
+        break
+      case 150000:
+        lifeInsuranceId = 3
+        break
+      case 200000:
+        lifeInsuranceId = 4
+        break
+      default:
+        lifeInsuranceId = null
+        break
+    }
+
     if (children?.children > 0) result.push({ description: 'Hijos', quantity: children.children, amount: children.price, totalAmount: children.price })
     carnets = carnets + children.children
     console.log(carnets, children.children)
@@ -371,9 +396,21 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan }) => {
         break
     }
 
-
     const downPayment = holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets) + (carnets * CARNET_PRICE)
     result.push({ description: 'Pago de prima', quantity: 1, amount: downPayment, totalAmount: downPayment })
+
+    await createQuickQuote(auth?.a_t, {
+      userId: auth?.uid,
+      planId: selectedPlan,
+      holderDob: holderDob,
+      partnerDob: partnerDob,
+      children: children.children,
+      lifeInsurance: lifeInsuranceId,
+      isMaternityIncluded: maternity ? 1 : 0,
+      paymentRecurrence: paymentRecurrence.yearlyPayments,
+      downPayment: downPayment,
+      monthlyPayment: recurrentPayments
+    })
 
     setCalculatedResult(result)
   }

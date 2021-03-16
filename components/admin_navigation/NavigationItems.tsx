@@ -49,6 +49,14 @@ export const NavigationItems = (props) => {
       icon: <MdHistory size='1.5em' />
     },
     {
+      title: 'Cotizaciones rápidas',
+      route: '/admin/quickquotes',
+      activePage: router.pathname.startsWith('/admin/quickquotes'),
+      authorization: ['USER_ADMIN_ROOT'],
+      canViewThis: isUserAuthorizedToViewThisPage(auth?.r, ['USER_ADMIN_ROOT']),
+      icon: <MdViewList size='1.5em' />
+    },
+    {
       title: 'Planes',
       route: '/admin/plans',
       activePage: router.pathname.startsWith('/admin/plans'),
