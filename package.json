@@ -38,6 +38,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@tailwindcss/jit": "^0.1.1",
     "@types/nprogress": "^0.2.0",
     "@types/react-phone-number-input": "^3.0.6"
   }
