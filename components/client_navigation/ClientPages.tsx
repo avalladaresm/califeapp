@@ -1,5 +1,6 @@
 import { useRouter } from "next/router"
 import React from "react"
+import { BsPersonFill } from 'react-icons/bs'
 
 const Client = (props) => {
   const router = useRouter()
@@ -43,8 +44,12 @@ const Client = (props) => {
   return (
     <div className='flex flex-col border max-h-176 border-gray-300 bg-white py-5 space-y-5 rounded-sm'>
       <div className='flex flex-col px-20 space-y-2 justify-center'>
-        <div className='h-48 w-48 rounded-full bg-orange-400 self-center place-self-center' />
-        <div className='text-xl self-center place-self-center'>
+        <div className='h-48 w-48 self-center place-self-center'>
+          <div className='flex justify-center self-center'>
+            <BsPersonFill size='12rem' className='static opacity-30 border border-blueGray-900 rounded-full z-0' />
+          </div>
+        </div>
+        <div className='text-xl font-semibold self-center place-self-center'>
           {props.customerName}
         </div>
       </div>
