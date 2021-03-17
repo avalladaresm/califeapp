@@ -42,7 +42,7 @@ const Table = (props) => {
                         return (
                           <td
                             {...cell.getCellProps()}
-                            className='px-6 py-3 whitespace-nowrap'
+                            className='px-6 py-3 whitespace-normal'
                           >
                             {cell.render('Cell')}
                           </td>
