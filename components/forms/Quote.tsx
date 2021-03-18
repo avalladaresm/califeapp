@@ -1,8 +1,9 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { differenceInMonths, differenceInYears } from 'date-fns'
 import { RatePlan, RATE_PLAN_ADDER, RATE_PLAN_MULTIPLIER, CARNET_PRICE, MaternityPrices } from '../../constants';
 import { PlanContext } from '../../context/PlanContext';
 import { PlanTypes } from '../../models/index'
+import { useQueryClient } from 'react-query';
 import { createQuickQuote } from '../../services/QuickQuote';
 import { useAuth } from '../../pages/auth/AuthService';
 
@@ -17,8 +18,8 @@ interface LifeInsurance {
 }
 
 interface PaymentRecurrence {
-  recurrence: string
-  yearlyPayments: number
+  installmentInWords: string
+  yearlyInstallments: number
 }
 
 interface QuoteData {
@@ -27,10 +28,10 @@ interface QuoteData {
   maternity: boolean
   children: Children
   lifeInsurance: LifeInsurance
-  paymentRecurrence: PaymentRecurrence
+  installments: PaymentRecurrence
 }
 
-const Quote = () => {
+const Quote = (props) => {
   const [_holderDob, _setHolderDob] = useState<Date>(null);
   const [_partnerDob, _setPartnerDob] = useState<Date>(null);
   const [_maternity, _setMaternity] = useState<boolean>();
@@ -39,17 +40,21 @@ const Quote = () => {
   const [_paymentRecurrence, _setPaymentRecurrence] = useState<PaymentRecurrence>();
   const [_calculatedResult, _setCalculatedResult] = useState([]);
 
+  const queryClient = useQueryClient()
   const auth = useAuth(queryClient)
-
   const selectedPlan = useContext(PlanContext)
-  console.log('calculated', _calculatedResult, _lifeInsurance)
+
+  useEffect(() => {
+    props.setQuoteResult(_calculatedResult)
+  }, [_calculatedResult]);
+
   const quoteData: QuoteData = {
     holderDob: _holderDob,
     partnerDob: _partnerDob,
     maternity: _maternity,
     children: _children,
     lifeInsurance: _lifeInsurance,
-    paymentRecurrence: _paymentRecurrence,
+    installments: _paymentRecurrence,
   }
 
   return (
@@ -72,9 +77,13 @@ const Quote = () => {
               setCalculatedResult={_setCalculatedResult}
               quoteData={quoteData}
               selectedPlan={selectedPlan}
+              queryClient={queryClient}
               auth={auth}
             />
-            <QuoteResult calculatedResult={_calculatedResult} />
+            <QuoteResult
+              calculatedResult={_calculatedResult}
+              setQuoteResultAccepted={props.setQuoteResultAccepted}
+            />
           </div>
         </dl>
       </div>
@@ -108,8 +117,8 @@ const Partner = ({ setPartnerDob }) => {
           Cónyugue
           </div>
         <div className='space-x-2'>
-          <input type='checkbox' name='includePartner' id='includePartner' onChange={e => (_setInclude(e.target.checked), !e.target.checked && setPartnerDob(null))} />
-          <label htmlFor='includePartner' className='text-gray-700'>¿Incluir?</label>
+          <input type='checkbox' name='isPartnerIncluded' id='isPartnerIncluded' onChange={e => (_setInclude(e.target.checked), !e.target.checked && setPartnerDob(null))} />
+          <label htmlFor='isPartnerIncluded' className='text-gray-700'>¿Incluir?</label>
         </div>
       </dt>
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
@@ -172,7 +181,7 @@ const Children = ({ setChildren }) => {
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
         <div className='flex flex-row space-x-7'>
           {_children.map((c, i) => (
-            <div className='space-x-2'>
+            <div key={i} className='space-x-2'>
               <input type='radio' name={`children`} id={`children${i}`} value={c.children} onChange={e => setChildren({ children: Number(e.target.value), price: c.price })} />
               <label htmlFor={`children${i}`}>{c.children === 0 ? 'Ninguno' : `${c.children} (${c.price.toLocaleString('en-US', { style: 'currency', currency: 'HNL', currencyDisplay: 'narrowSymbol', minimumFractionDigits: 2 })})`}</label>
             </div>
@@ -215,7 +224,7 @@ const LifeInsurance = ({ setLifeInsurance }) => {
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
         <div className='flex flex-row space-x-7'>
           {options.map((c, i) => (
-            <div className='space-x-2'>
+            <div key={i} className='space-x-2'>
               <input type='radio' name={`lifeInsurance`} id={`lifeInsurance${i}`} value={c.coverage} onChange={e => setLifeInsurance({ coverage: Number(e.target.value), price: c.price })} />
               <label htmlFor={`lifeInsurance${i}`}>{c.coverage === 0 ? 'Ninguno' : `${c.coverage.toLocaleString('en-US', { style: 'currency', currency: 'HNL', currencyDisplay: 'narrowSymbol', minimumFractionDigits: 2 })} (${c.price.toLocaleString('en-US', { style: 'currency', currency: 'HNL', currencyDisplay: 'narrowSymbol', minimumFractionDigits: 2 })})`}</label>
             </div>
@@ -229,20 +238,20 @@ const LifeInsurance = ({ setLifeInsurance }) => {
 const PaymentRecurrence = ({ setRecurrence }) => {
   const options = [
     {
-      recurrence: 'mensual',
-      yearlyPayments: 12
+      installmentInWords: 'mensual',
+      yearlyInstallments: 12
     }, {
-      recurrence: 'bi-mensual',
-      yearlyPayments: 6
+      installmentInWords: 'bi-mensual',
+      yearlyInstallments: 6
     }, {
-      recurrence: 'trimestral',
-      yearlyPayments: 4
+      installmentInWords: 'trimestral',
+      yearlyInstallments: 4
     }, {
-      recurrence: 'semestral',
-      yearlyPayments: 2
+      installmentInWords: 'semestral',
+      yearlyInstallments: 2
     }, {
-      recurrence: 'anual',
-      yearlyPayments: 1
+      installmentInWords: 'anual',
+      yearlyInstallments: 1
     },
   ]
 
@@ -256,9 +265,9 @@ const PaymentRecurrence = ({ setRecurrence }) => {
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
         <div className='flex flex-row space-x-7'>
           {options.map((o, i) => (
-            <div className='space-x-2'>
-              <input type='radio' name={`recurrence`} id={`recurrence${i}`} value={o.yearlyPayments} onChange={e => setRecurrence({ yearlyPayments: Number(e.target.value), recurrence: o.recurrence })} />
-              <label htmlFor={`recurrence${i}`}>{o.recurrence}</label>
+            <div key={i} className='space-x-2'>
+              <input type='radio' name={`installmentInWords`} id={`installmentInWords${i}`} value={o.yearlyInstallments} onChange={e => setRecurrence({ yearlyInstallments: Number(e.target.value), installmentInWords: o.installmentInWords })} />
+              <label htmlFor={`installmentInWords${i}`}>{o.installmentInWords}</label>
             </div>
           ))}
         </div>
@@ -267,10 +276,10 @@ const PaymentRecurrence = ({ setRecurrence }) => {
   )
 }
 
-const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, auth }) => {
+const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, queryClient, auth }) => {
   const { PLAN_PLATA, PLAN_ORO, PLAN_PLATINUM } = PlanTypes
   const { SILVER, GOLD, PLATINUM } = MaternityPrices
-  const { holderDob, partnerDob, children, lifeInsurance, maternity, paymentRecurrence }: QuoteData = quoteData
+  const { holderDob, partnerDob, children, lifeInsurance, maternity, installments }: QuoteData = quoteData
   let carnets = 0
   const result = []
   const currentQuote = {}
@@ -363,41 +372,77 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, auth }) =
     }
 
     if (children?.children > 0) result.push({ description: 'Hijos', quantity: children.children, amount: children.price, totalAmount: children.price })
+    
     carnets = carnets + children.children
-    console.log(carnets, children.children)
+
     if (lifeInsurance?.coverage > 0) result.push({ description: 'Seguro de vida', quantity: carnets, amount: lifeInsurance.price, totalAmount: lifeInsurance.price * carnets })
 
     result.push({ description: 'Carnets', quantity: carnets, amount: CARNET_PRICE, totalAmount: carnets * CARNET_PRICE })
 
-    let recurrentPayments = 0
-    switch (paymentRecurrence?.yearlyPayments) {
+    let totalQuoteAmount = 0
+    let installmentPayment = 0
+    let downPayment = 0
+    let totalInstallments = 0
+    switch (installments?.yearlyInstallments) {
       case 1:
-        recurrentPayments = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
-        result.push({ description: `Pago ${paymentRecurrence.recurrence}`, quantity: 1, amount: recurrentPayments / 1, totalAmount: recurrentPayments })
+        totalQuoteAmount = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
+        installmentPayment = totalQuoteAmount / 1
+        downPayment = installmentPayment + (carnets * CARNET_PRICE)
+        totalInstallments = 0
+        result.push({ description: `Pago ${installments.installmentInWords}`, quantity: 0, amount: 0, totalAmount: totalQuoteAmount - installmentPayment })
         break
       case 2:
-        recurrentPayments = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
-        result.push({ description: `Pago ${paymentRecurrence.recurrence}`, quantity: 2, amount: recurrentPayments / 2, totalAmount: recurrentPayments })
+        totalQuoteAmount = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
+        installmentPayment = totalQuoteAmount / 2
+        downPayment = installmentPayment + (carnets * CARNET_PRICE)
+        totalInstallments = totalQuoteAmount - installmentPayment
+        result.push({ description: `Pago ${installments.installmentInWords}`, quantity: 1, amount: (totalQuoteAmount / 2), totalAmount: totalInstallments })
         break
       case 4:
-        recurrentPayments = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
-        result.push({ description: `Pago ${paymentRecurrence.recurrence}`, quantity: 4, amount: recurrentPayments / 4, totalAmount: recurrentPayments })
+        totalQuoteAmount = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
+        installmentPayment = totalQuoteAmount / 4
+        downPayment = installmentPayment + (carnets * CARNET_PRICE)
+        totalInstallments = totalQuoteAmount - installmentPayment
+        result.push({ description: `Pago ${installments.installmentInWords}`, quantity: 3, amount: (totalQuoteAmount / 4), totalAmount: totalInstallments })
         break
       case 6:
-        recurrentPayments = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
-        result.push({ description: `Pago ${paymentRecurrence.recurrence}`, quantity: 6, amount: recurrentPayments / 6, totalAmount: recurrentPayments })
+        totalQuoteAmount = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
+        installmentPayment = totalQuoteAmount / 6
+        downPayment = installmentPayment + (carnets * CARNET_PRICE)
+        totalInstallments = totalQuoteAmount - installmentPayment
+        result.push({ description: `Pago ${installments.installmentInWords}`, quantity: 5, amount: (totalQuoteAmount / 6), totalAmount: totalInstallments })
         break
       case 12:
-        recurrentPayments = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
-        result.push({ description: `Pago ${paymentRecurrence.recurrence}`, quantity: 12, amount: recurrentPayments / 12, totalAmount: recurrentPayments })
+        totalQuoteAmount = (holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets)) * 12
+        installmentPayment = totalQuoteAmount / 12
+        downPayment = installmentPayment + (carnets * CARNET_PRICE)
+        totalInstallments = totalQuoteAmount - installmentPayment
+        result.push({ description: `Pago ${installments.installmentInWords}`, quantity: 11, amount: (totalQuoteAmount / 12), totalAmount: totalInstallments })
         break
       default:
-        recurrentPayments = 0
+        totalQuoteAmount = 0
+        installmentPayment = 0
+        downPayment = 0
+        totalInstallments = 0
         break
     }
 
-    const downPayment = holderAssignedFee + partnerAssignedFee + maternityPrice + children.price + (lifeInsurance.price * carnets) + (carnets * CARNET_PRICE)
     result.push({ description: 'Pago de prima', quantity: 1, amount: downPayment, totalAmount: downPayment })
+    result.push({ description: 'Total plan', quantity: '-', amount: downPayment + totalInstallments, totalAmount: downPayment + totalInstallments })
+    
+    currentQuote['planId'] = selectedPlan
+    currentQuote['holderAge'] = null
+    currentQuote['holderDob'] = holderDob
+    currentQuote['partnerAge'] = null
+    currentQuote['partnerDob'] = partnerDob
+    currentQuote['isPartnerIncluded'] = partnerDob ? 1 : 0
+    currentQuote['children'] = children
+    currentQuote['lifeInsurance'] = lifeInsurance
+    currentQuote['isMaternityIncluded'] = maternity ? 1 : 0
+    currentQuote['installments'] = installments.yearlyInstallments,
+    currentQuote['downPayment'] = downPayment
+    currentQuote['installmentPayment'] = installmentPayment
+    queryClient.setQueryData('CurrentQuote', currentQuote)
 
     await createQuickQuote(auth?.a_t, {
       userId: auth?.uid,
@@ -407,9 +452,9 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, auth }) =
       children: children.children,
       lifeInsurance: lifeInsuranceId,
       isMaternityIncluded: maternity ? 1 : 0,
-      paymentRecurrence: paymentRecurrence.yearlyPayments,
+      installments: installments.yearlyInstallments,
       downPayment: downPayment,
-      monthlyPayment: recurrentPayments
+      installmentPayment: installmentPayment
     })
 
     setCalculatedResult(result)
@@ -419,7 +464,7 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, auth }) =
     <div className='px-4 py-5 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-6 bg-white justify-items-center'>
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
         <div className='flex flex-row space-x-7'>
-          <button type='submit' style={{ backgroundColor: '#09dca4' }} className='h-12 w-36 px-2 rounded-md flex flex-row justify-center items-center' onClick={() => calculateQuote()}>
+          <button type='submit' className='h-12 px-5 bg-[#09dca4] rounded-md flex flex-row justify-center items-center' onClick={async () => calculateQuote()}>
             <div className='text-lg text-white font-semibold'>
               Calcular
             </div>
@@ -430,7 +475,7 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, auth }) =
   )
 }
 
-const QuoteResult = ({ calculatedResult }) => {
+const QuoteResult = ({ calculatedResult, setQuoteResultAccepted }) => {
 
   const cols = [
     {
@@ -478,6 +523,17 @@ const QuoteResult = ({ calculatedResult }) => {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className='px-4 py-5 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-6 justify-items-center'>
+            <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
+              <div className='flex flex-row space-x-7'>
+                <div className='h-12 w-auto px-5 bg-[#09dca4] rounded-md flex flex-row justify-center items-center cursor-pointer' onClick={() => setQuoteResultAccepted(true)}>
+                  <div className='text-lg text-white font-semibold'>
+                    Aceptar cotización y crear plan
+                  </div>
+                </div>
+              </div>
+            </dd>
           </div>
         </div>
       </div>
