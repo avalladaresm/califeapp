@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import { useIsFetching, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { LoggedInUserCookieData } from '../../pages/auth/AuthModel';
 import { useAuth } from '../../pages/auth/AuthService';
 import { Formik, Form, Field, FormikState } from 'formik';
 import { object, string, number, date } from 'yup';
 import { FcCheckmark } from 'react-icons/fc';
-import Select from 'react-select'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css';
-import { format, subDays, subYears } from 'date-fns'
+import { subYears } from 'date-fns'
 import HolderHealthQuestionnaire from './HolderHealthQuestionnaire';
 import DependantHealthQuestionnaire from './DependantHealthQuestionnaire';
 import PeopleAged50Exams from './PeopleAged50Exams';
@@ -16,6 +13,8 @@ import { createCustomer } from '../../services/Customer'
 import { store } from 'react-notifications-component'
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import MunicipalityDropdown from '../MunicipalityDropdown';
+import Tabs from '../Tabs';
+import { CreatePlanCustomer } from '../../services/PlanCustomer';
 
 interface NewCustomer {
   firstname: string,
@@ -96,11 +95,13 @@ export interface OptionType {
   value: number | string
 }
 
-const NewCustomer = () => {
+const NewCustomer = (props) => {
   const [selectedDob, setSelectedDob] = useState<Date>();
   const [_beneficiaries, _setBeneficiaries] = useState<Beneficiary[]>([])
   const [_dependants, _setDependants] = useState<Dependant[]>([])
   const [_dependantsAmount, _setDependantsAmount] = useState<number>(0)
+  const [_holderQuestionsAnswers, _setHolderQuestionsAnswers] = useState([]);
+  const [_currentQuote, _setCurrentQuote] = useState([]);
 
   const queryClient = useQueryClient()
   const auth: LoggedInUserCookieData = useAuth(queryClient)
@@ -155,6 +156,10 @@ const NewCustomer = () => {
     }
     newItems[dependantIndex][field] = data
     _setDependants(newItems)
+  }
+
+  const addHQuestionnaireDetail = (questionnaire) => {
+    _setHolderQuestionsAnswers(questionnaire)
   }
 
   const NewCustomerSchema = object().shape({
@@ -226,7 +231,7 @@ const NewCustomer = () => {
   });
 
   const initialValues = {
-    uid: auth.uid ?? null,
+    uid: auth?.uid ?? '',
     firstname: '',
     middlename: '',
     firstSurname: '',
@@ -259,8 +264,84 @@ const NewCustomer = () => {
     telephoneNumber: '',
     faxNumber: '',
     beneficiaries: [],
-    dependants: []
+    dependants: [],
+    planId: '',
+    holderAge: '',
+    holderDob: '',
+    partnerAge: '',
+    partner: '',
+    isPartnerIncluded: '',
+    children: '',
+    lifeInsurance: '',
+    isMaternityIncluded: '',
+    downPayment: '',
+    installmentPayment: '',
+    status: '',
   }
+
+  let tabs = ({
+    values,
+    initialValues,
+    touched,
+    errors,
+    selectedDob,
+    setSelectedDob,
+    setFieldValue,
+    setTouched,
+    isSubmitting,
+    resetForm,
+    addBeneficiaryDetail,
+    addHQuestionnaireDetail
+  }) => [{
+    tabeName: 'Titular',
+    children: <div>
+      <GeneralInfo
+        values={values}
+        initialValues={initialValues}
+        touched={touched}
+        errors={errors}
+        selectedDob={selectedDob}
+        setSelectedDob={setSelectedDob}
+        setFieldValue={setFieldValue}
+        setTouched={setTouched}
+      />
+      <Address
+        values={values}
+        initialValues={initialValues}
+        touched={touched}
+        errors={errors}
+        setFieldValue={setFieldValue}
+        setTouched={setTouched}
+      />
+      <IdentificationDocument
+        values={values}
+        initialValues={initialValues}
+        touched={touched}
+        errors={errors}
+        setFieldValue={setFieldValue}
+        setTouched={setTouched}
+      />
+      <Contact
+        values={values}
+        initialValues={initialValues}
+        touched={touched}
+        errors={errors}
+      />
+      <Beneficiaries
+        values={values}
+        initialValues={initialValues}
+        touched={touched}
+        errors={errors}
+        addBeneficiaryDetail={addBeneficiaryDetail}
+      />
+    </div>
+  },
+  {
+    tabeName: 'Questionario Salud Titular',
+    children: <HHealthQuestionnaire addHQuestionnaireDetail={addHQuestionnaireDetail} />
+  }]
+
+  const isPartnerIncluded = props.quoteResult.filter(qr => qr.description === 'Cónyugue')
 
   return (
     <Formik
@@ -268,15 +349,48 @@ const NewCustomer = () => {
       //validationSchema={NewCustomerSchema}
       onSubmit={async (values, { resetForm }) => {
         try {
+          const data: any = queryClient.getQueryData('CurrentQuote')
           values.uid = auth.uid
           values.addressType = 'Casa'
           values.city = 'SPS'
           values.beneficiaries = _beneficiaries
           values.dependants = _dependants
-          
+
           let res = await createCustomer(auth.a_t, values)
+
+          const currentQuote = queryClient.getQueryData('CurrentQuote')
+          const _children = currentQuote.children.children
+          let lifeInsuranceId = null
+          switch (currentQuote.lifeInsurance.coverage) {
+            case 50000:
+              lifeInsuranceId = 1
+              break
+            case 100000:
+              lifeInsuranceId = 2
+              break
+            case 150000:
+              lifeInsuranceId = 3
+              break
+            case 200000:
+              lifeInsuranceId = 4
+              break
+            default:
+              lifeInsuranceId = null
+              break
+          }
+          delete (currentQuote['userId'])
+          delete (currentQuote['lifeInsurance'])
+          delete (currentQuote['children'])
+          delete (currentQuote['holderAge'])
+          delete (currentQuote['partnerAge'])
+          delete (currentQuote['isPartnerIncluded'])
+
+          currentQuote['children'] = _children
+          currentQuote['lifeInsurance'] = lifeInsuranceId
+
+          CreatePlanCustomer(auth?.a_t, currentQuote)
+
           if (res.status === 200) {
-            console.log('yeyy', values)
             store.addNotification({
               message: `El cliente se creó exitósamente.`,
               type: 'success',
@@ -304,54 +418,28 @@ const NewCustomer = () => {
     >
       {({ errors, touched, initialValues, values, resetForm, setFieldValue, setTouched, handleSubmit, isSubmitting }) => (
         <Form onSubmit={handleSubmit}>
-          <div className='flex flex-col w-full h-auto rounded-md border border-blueGray-300 bg-white'>
+          <div className='flex flex-col w-full h-auto rounded-sm border border-blueGray-300 bg-white'>
             <div className='flex flex-col p-4 max-w-7xl xl:w-4/5 lg:w-11/12 w-full justify-self-center self-center space-y-10'>
+              <Tabs tabs={tabs({
+                values,
+                initialValues,
+                touched,
+                errors,
+                selectedDob,
+                setSelectedDob,
+                setFieldValue,
+                setTouched,
+                isSubmitting,
+                resetForm,
+                addBeneficiaryDetail,
+                addHQuestionnaireDetail
+              })} />
               <ActionButtons
                 initialValues={initialValues}
                 isSubmitting={isSubmitting}
                 resetForm={resetForm}
               />
-              <GeneralInfo
-                values={values}
-                initialValues={initialValues}
-                touched={touched}
-                errors={errors}
-                selectedDob={selectedDob}
-                setSelectedDob={setSelectedDob}
-                setFieldValue={setFieldValue}
-                setTouched={setTouched}
-              />
-              <Address
-                values={values}
-                initialValues={initialValues}
-                touched={touched}
-                errors={errors}
-                setFieldValue={setFieldValue}
-                setTouched={setTouched}
-              />
-              <IdentificationDocument
-                values={values}
-                initialValues={initialValues}
-                touched={touched}
-                errors={errors}
-                setFieldValue={setFieldValue}
-                setTouched={setTouched}
-              />
-              <Contact
-                values={values}
-                initialValues={initialValues}
-                touched={touched}
-                errors={errors}
-              />
-              <Beneficiaries
-                values={values}
-                initialValues={initialValues}
-                touched={touched}
-                errors={errors}
-                addBeneficiaryDetail={addBeneficiaryDetail}
-              />
-              <HHealthQuestionnaire />
-              <HowManyDependants setDependantsAmount={_setDependantsAmount} />
+              {/* <HowManyDependants setDependantsAmount={_setDependantsAmount} />
               <Dependants
                 dependantsAmount={_dependantsAmount}
                 addDependantDetail={addDependantDetail}
@@ -363,7 +451,7 @@ const NewCustomer = () => {
                 setSelectedDob={setSelectedDob}
                 setFieldValue={setFieldValue}
                 setTouched={setTouched}
-              />
+              /> */}
             </div>
           </div>
         </Form>
@@ -374,7 +462,6 @@ const NewCustomer = () => {
 }
 
 export default NewCustomer
-
 
 {/* Questionario de salud titular */ }
 {/* <div className='w-11/12 justify-self-center self-center mb-5' >
@@ -413,7 +500,8 @@ const ActionButtons = ({ initialValues, isSubmitting, resetForm }) => {
           Guardando datos...
                         </button> :
         <button
-          className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-lightBlue-500 hover:bg-lightBlue-600 active:bg-lightBlue-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner'
+          //className='xl:w-1/12 md:w-1/6 sm:w-1/5 w-1/2 sm px-3 py-2 rounded-md text-md font-semibold text-coolGray-50 bg-lightBlue-500 hover:bg-lightBlue-600 active:bg-lightBlue-900 focus:ring-2 focus:ring-opacity-50 focus:ring-blue-500 active:shadow-inner'
+          style={{ backgroundColor: '#09dca4' }} className='h-12 w-36 px-2 rounded-md flex flex-row justify-center items-center text-white text-md font-semibold'
           type='submit'
         >
           Guardar
@@ -973,14 +1061,14 @@ const Beneficiaries = ({ values, initialValues, touched, errors, addBeneficiaryD
   )
 }
 
-const HHealthQuestionnaire = () => {
+const HHealthQuestionnaire = ({ addHQuestionnaireDetail }) => {
   return (
     <div>
       <div className='w-full justify-self-center self-center mb-2' >
         <p className='font-semibold text-2xl'>Questionario de Salud del Titular</p>
       </div>
       <div className='flex flex-wrap justify-evenly self-center'>
-        <HolderHealthQuestionnaire />
+        <HolderHealthQuestionnaire addHQuestionnaireDetail={addHQuestionnaireDetail} />
       </div>
     </div>
   )

@@ -30,6 +30,9 @@ module.exports = {
       white: colors.white,
       black: colors.black
     },
+    maxWidth: {
+      '8xl': '88rem'
+    },
     extend: {
       spacing: {
         '112': '28rem',

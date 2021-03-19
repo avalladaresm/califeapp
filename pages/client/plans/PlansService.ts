@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios"
 import { QueryObserverResult, useQuery } from "react-query"
-import { Plan } from './PlansModel'
+import { Plan, PlanCustomer } from './PlansModel'
 
 const FetchPlansCustomer = async (accessToken: string, userId: number): Promise<PlanCustomer[]> => {
   const plans = await axios.get(`http://localhost:4000/planCustomer/${userId}`, {
