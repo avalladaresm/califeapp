@@ -27,3 +27,21 @@ const FetchPlansCustomers = async (accessToken: string): Promise<Plan[]> => {
 export const usePlansCustomers = (accessToken: string): QueryObserverResult<Plan[], AxiosError> => {
   return useQuery('PlansCustomers', async () => await FetchPlansCustomers(accessToken), { refetchOnMount: false })
 }
+
+export const FetchCustomerPlan = async (accessToken: string, customerId: number): Promise<any> => {
+  const customerPlan = await axios.get(`http://localhost:4000/planCustomer/customer/${customerId}`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  })
+  return customerPlan.data
+}
+
+export const UpdateCustomerPlanStatus = async (accessToken: string, planId: number): Promise<any> => {
+  const customerPlan = await axios.patch(`http://localhost:4000/planCustomer/updateCustomerPlanStatus/${planId}`, {}, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  })
+  return customerPlan.data
+}

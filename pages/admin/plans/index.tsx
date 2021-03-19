@@ -1,4 +1,6 @@
+import { format } from "date-fns"
 import { GetServerSidePropsContext } from "next"
+import Link from "next/link"
 import React from "react"
 import MainContainer from "../../../components/admin_navigation"
 import PageContent from "../../../components/PageContent"
@@ -12,6 +14,18 @@ const Plans = (props) => {
   const { data } = usePlansCustomers(props?.cookies?.a_t)
 
   const columns = [
+    {
+      id: 'id',
+      accessor: 'id',
+      Header: '',
+      Cell: (cell) => {
+        return (
+          <Link href={`/admin/plans/${cell.row.values.id}`}>
+            <a className='text-blue-500 hover:underline active:text-blue-800'>Ver detalles</a>
+          </Link>
+        )
+      }
+    },
     {
       id: 'planName',
       accessor: 'planName',
@@ -30,12 +44,25 @@ const Plans = (props) => {
     {
       id: 'status',
       accessor: 'status',
-      Header: 'Status'
+      Header: 'Status',
+      Cell: (cell) => {
+        const { status } = cell.row.values
+        return (
+          <div className={`font-semibold ${status === 'success' ?  'text-green-400': (status === 'pending' ? 'text-orange-400' : status === 'cancelled' && 'text-red-600')}`}>{status}</div>
+        )
+      }
     },
     {
       id: 'createdDate',
       accessor: 'createdDate',
-      Header: 'Requested date'
+      Header: 'Fecha de solicitud',
+      Cell: (cell) => {
+        return (
+          <div>
+            {format(new Date(cell.row.values.createdDate), 'PPPP pp')}
+          </div>
+        )
+      }
     }
   ]
 
