@@ -372,7 +372,7 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, queryClie
     }
 
     if (children?.children > 0) result.push({ description: 'Hijos', quantity: children.children, amount: children.price, totalAmount: children.price })
-    
+
     carnets = carnets + children.children
 
     if (lifeInsurance?.coverage > 0) result.push({ description: 'Seguro de vida', quantity: carnets, amount: lifeInsurance.price, totalAmount: lifeInsurance.price * carnets })
@@ -429,7 +429,7 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, queryClie
 
     result.push({ description: 'Pago de prima', quantity: 1, amount: downPayment, totalAmount: downPayment })
     result.push({ description: 'Total plan', quantity: '-', amount: downPayment + totalInstallments, totalAmount: downPayment + totalInstallments })
-    
+
     currentQuote['planId'] = selectedPlan
     currentQuote['holderAge'] = null
     currentQuote['holderDob'] = holderDob
@@ -439,7 +439,7 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, queryClie
     currentQuote['children'] = children
     currentQuote['lifeInsurance'] = lifeInsurance
     currentQuote['isMaternityIncluded'] = maternity ? 1 : 0
-    currentQuote['installments'] = installments.yearlyInstallments,
+    currentQuote['installments'] = installments.yearlyInstallments
     currentQuote['downPayment'] = downPayment
     currentQuote['installmentPayment'] = installmentPayment
     queryClient.setQueryData('CurrentQuote', currentQuote)

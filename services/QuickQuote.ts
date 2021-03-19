@@ -13,9 +13,9 @@ export const createQuickQuote = async (accessToken: string, values: any) => {
         children: values.children,
         lifeInsurance: values.lifeInsurance,
         isMaternityIncluded: values.isMaternityIncluded,
-        paymentRecurrence: values.paymentRecurrence,
+        installments: values.installments,
         downPayment: values.downPayment,
-        monthlyPayment: values.monthlyPayment,
+        installmentPayment: values.installmentPayment,
       }
     }, {
       headers: {
