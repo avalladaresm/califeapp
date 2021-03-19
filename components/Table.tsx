@@ -4,7 +4,7 @@ import { useTable } from 'react-table'
 const Table = (props) => {
   const columns = useMemo(() => props.columns, [])
   const data = useMemo(() => props.data, [])
-
+  const { size } = props
   const {
     getTableProps,
     getTableBodyProps,
@@ -15,8 +15,8 @@ const Table = (props) => {
 
   return (
     <div className="flex flex-col px-4 items-center mb-5">
-      <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="align-middle inline-block sm:px-6 lg:px-8">
+      <div className={`overflow-x-auto sm:-mx-6 lg:-mx-8 ${size === 'full' && 'w-full'}`}>
+        <div className={`align-middle ${!size && 'inline-block' } sm:px-6 lg:px-8`}>
           <div className="shadow overflow-hidden border border-gray-300 sm:rounded-lg">
             <table {...getTableProps()} className='table-auto max-w-full min-w-full divide-y divide-gray-200'>
               <thead className='bg-gray-100' >

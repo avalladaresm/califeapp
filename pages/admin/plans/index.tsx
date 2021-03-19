@@ -44,7 +44,7 @@ const Plans = (props) => {
       {
         data ?
           <PageContent title={'Customers\' plans'}>
-            <Table columns={columns} data={data} />
+            <Table columns={columns} data={data} size='full' />
           </PageContent> :
           'Loading...'
       }

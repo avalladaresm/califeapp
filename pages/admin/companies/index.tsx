@@ -47,7 +47,7 @@ const Companies = (props) => {
       {
         data ?
           <PageContent title='Companies'>
-            <Table columns={columns} data={data} />
+            <Table columns={columns} data={data} size='full' />
           </PageContent> :
           'Loading...'
       }

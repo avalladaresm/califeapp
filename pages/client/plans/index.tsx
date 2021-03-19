@@ -41,7 +41,7 @@ const Plans = (props) => {
             planCustomer?.data ?
               <PageContent title='Historial de planes' >
                 <div className='whitespace-nowrap'>
-                  <Table columns={columns} data={planCustomer?.data} />
+                  <Table columns={columns} data={planCustomer?.data} size='full' />
                 </div>
               </PageContent> :
               'Loading...'
