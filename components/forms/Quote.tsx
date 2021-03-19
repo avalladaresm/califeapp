@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { differenceInMonths, differenceInYears, isBefore, subYears } from 'date-fns'
+import { differenceInMonths, differenceInYears, format, isBefore, subYears } from 'date-fns'
 import { RatePlan, RATE_PLAN_ADDER, RATE_PLAN_MULTIPLIER, CARNET_PRICE, MaternityPrices } from '../../constants';
 import { PlanContext } from '../../context/PlanContext';
 import { PlanTypes } from '../../models/index'
@@ -81,10 +81,10 @@ const Quote = (props) => {
               queryClient={queryClient}
               auth={auth}
             />
-            <QuoteResult
+            {_calculatedResult.length > 0 && <QuoteResult
               calculatedResult={_calculatedResult}
               setQuoteResultAccepted={props.setQuoteResultAccepted}
-            />
+            />}
           </div>
         </dl>
       </div>
@@ -464,8 +464,8 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, queryClie
     await createQuickQuote(auth?.a_t, {
       userId: auth?.uid,
       planId: selectedPlan,
-      holderDob: holderDob,
-      partnerDob: partnerDob,
+      holderDob: format(new Date(holderDob), 'yyyy-MM-dd'),
+      partnerDob: format(new Date(partnerDob), 'yyyy-MM-dd'),
       children: children.children,
       lifeInsurance: lifeInsuranceId,
       isMaternityIncluded: maternity ? 1 : 0,
