@@ -1,3 +1,4 @@
+import { format } from "date-fns"
 import { GetServerSidePropsContext } from "next"
 import React from "react"
 import MainContainer from "../../../components/client_navigation"
@@ -28,7 +29,12 @@ const Plans = (props) => {
     {
       id: 'createdDate',
       accessor: 'createdDate',
-      Header: 'Fecha de creación'
+      Header: 'Fecha de creación',
+      Cell: (cell) => {
+        return (
+          <div>{format(new Date(cell.row.values.createdDate), 'PPPP pp')}</div>
+        )
+      }
     }
   ]
 
@@ -39,7 +45,7 @@ const Plans = (props) => {
         <div className='w-full p-5 border border-gray-300 bg-white'>
           {
             planCustomer?.data ?
-              <PageContent title='Historial de planes' >
+              <PageContent title='Mis planes' >
                 <div className='whitespace-nowrap'>
                   <Table columns={columns} data={planCustomer?.data} size='full' />
                 </div>

@@ -16,6 +16,8 @@ import { usePlans } from "./PlansService"
 
 const NewPlan = (props) => {
   const [_selectedPlan, _setSelectedPlan] = useState<Plan>()
+  const [_quoteResult, _setQuoteResult] = useState([]);
+  const [_quoteResultAccepted, _setQuoteResultAccepted] = useState<boolean>(false);
 
   const user = useUser(props?.cookies?.a_t, props?.loggedInUser?.idUser)
   const plan = useContext(PlanContext)
@@ -41,8 +43,8 @@ const NewPlan = (props) => {
             plans.isLoading ? <div>loading...</div> :
               <PageContent title={`Nuevo Plan - ${_selectedPlan?.name}`}>
                 <PlanDescription planDescription={_selectedPlan} />
-                <Quote />
-                <NewCustomer />
+                <Quote setQuoteResult={_setQuoteResult} setQuoteResultAccepted={_setQuoteResultAccepted} />
+                {_quoteResultAccepted && <NewCustomer quoteResult={_quoteResult} />}
               </PageContent>
           }
         </div>
