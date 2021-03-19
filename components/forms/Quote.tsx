@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { differenceInMonths, differenceInYears } from 'date-fns'
+import { differenceInMonths, differenceInYears, isBefore, subYears } from 'date-fns'
 import { RatePlan, RATE_PLAN_ADDER, RATE_PLAN_MULTIPLIER, CARNET_PRICE, MaternityPrices } from '../../constants';
 import { PlanContext } from '../../context/PlanContext';
 import { PlanTypes } from '../../models/index'
 import { useQueryClient } from 'react-query';
 import { createQuickQuote } from '../../services/QuickQuote';
 import { useAuth } from '../../pages/auth/AuthService';
+import { store } from 'react-notifications-component'
 
 interface Children {
   children: number
@@ -94,14 +95,29 @@ const Quote = (props) => {
 export default Quote
 
 const Holder = ({ setHolderDob }) => {
+  const [_holderDob, _setHolderDob] = useState<Date>();
+  const [_isHolderMinimumAge, _setIsHolderMinimumAge] = useState<boolean>();
+
+  useEffect(() => {
+    const holderMinimumAge = isBefore(_holderDob, subYears(new Date(), 18))
+    _setIsHolderMinimumAge(holderMinimumAge)
+    holderMinimumAge ? setHolderDob(_holderDob) : setHolderDob(null)
+  }, [_holderDob]);
+
   return (
     <div className='px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-white'>
-      <dt className='text-md font-medium'>
-        Titular
+      <dt className='flex flex-row text-md font-medium'>
+        <span className='text-red-500'>*</span>
+        <div className='flex flex-row space-x-5'>
+          <div>
+            Titular
+          </div>
+          {!_isHolderMinimumAge && <span className='font-normal text-red-500'>La edad mínima es 18 años.</span>}
+        </div>
       </dt>
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
         <label htmlFor='holderBirthDate'>Fecha de nacimiento</label>
-        <input type='date' name='holderBirthDate' id='holderBirthDate' onChange={e => setHolderDob(e.target.value)} />
+        <input type='date' name='holderBirthDate' id='holderBirthDate' onChange={e => _setHolderDob(e.target.valueAsDate)} />
       </dd>
     </div>
   )
@@ -175,7 +191,7 @@ const Children = ({ setChildren }) => {
     <div className='px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-white'>
       <dt className='flex flex-row space-x-4'>
         <div className='text-md font-medium'>
-          Hijos
+          <span className='text-red-500'>*</span>Hijos
         </div>
       </dt>
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
@@ -218,7 +234,7 @@ const LifeInsurance = ({ setLifeInsurance }) => {
     <div className='px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-white'>
       <dt className='flex flex-row space-x-4'>
         <div className='text-md font-medium'>
-          Cobertura de seguro de vida
+          <span className='text-red-500'>*</span>Cobertura de seguro de vida
         </div>
       </dt>
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
@@ -259,7 +275,7 @@ const PaymentRecurrence = ({ setRecurrence }) => {
     <div className='px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-white'>
       <dt className='flex flex-row space-x-4'>
         <div className='text-md font-medium'>
-          Tipo de pago
+          <span className='text-red-500'>*</span>Tipo de pago
         </div>
       </dt>
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
@@ -277,6 +293,7 @@ const PaymentRecurrence = ({ setRecurrence }) => {
 }
 
 const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, queryClient, auth }) => {
+  const [_calculateButtonDisabled, _setCalculateButtonDisabled] = useState<boolean>(true);
   const { PLAN_PLATA, PLAN_ORO, PLAN_PLATINUM } = PlanTypes
   const { SILVER, GOLD, PLATINUM } = MaternityPrices
   const { holderDob, partnerDob, children, lifeInsurance, maternity, installments }: QuoteData = quoteData
@@ -460,11 +477,19 @@ const ActionButtons = ({ setCalculatedResult, quoteData, selectedPlan, queryClie
     setCalculatedResult(result)
   }
 
+  useEffect(() => {
+    holderDob && children && lifeInsurance && installments ? _setCalculateButtonDisabled(false) : _setCalculateButtonDisabled(true)
+  }, [holderDob, children, lifeInsurance, installments]);
+
   return (
     <div className='px-4 py-5 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-6 bg-white justify-items-center'>
       <dd className='mt-1 text-md sm:mt-0 sm:col-span-2 space-x-2'>
         <div className='flex flex-row space-x-7'>
-          <button type='submit' className='h-12 px-5 bg-[#09dca4] rounded-md flex flex-row justify-center items-center' onClick={async () => calculateQuote()}>
+          <button
+            type='submit'
+            disabled={_calculateButtonDisabled}
+            className='h-12 px-5 bg-[#09dca4] rounded-md flex flex-row justify-center items-center disabled:opacity-40 disabled:bg-gray-400 disabled:cursor-not-allowed'
+            onClick={async () => calculateQuote()}>
             <div className='text-lg text-white font-semibold'>
               Calcular
             </div>

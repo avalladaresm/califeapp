@@ -42,7 +42,7 @@ const NewPlan = (props) => {
           {
             plans.isLoading ? <div>loading...</div> :
               <PageContent title={`Nuevo Plan - ${_selectedPlan?.name}`}>
-                <PlanDescription planDescription={_selectedPlan} />
+                {/* <PlanDescription planDescription={_selectedPlan} /> */}
                 <Quote setQuoteResult={_setQuoteResult} setQuoteResultAccepted={_setQuoteResultAccepted} />
                 {_quoteResultAccepted && <NewCustomer quoteResult={_quoteResult} />}
               </PageContent>
