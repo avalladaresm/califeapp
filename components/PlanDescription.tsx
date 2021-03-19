@@ -34,7 +34,7 @@ const PlanDescription = (props) => {
               <dt className='text-base font-medium'>
                 {d.header}
               </dt>
-              <dd className='flex flex-row justify-evenly text-base sm:mt-0 sm:col-span-2'>
+              <dd className='flex flex-row text-base sm:mt-0 sm:col-span-2 space-x-7'>
                 {d.data.map((dd, j) => <div>{dd}</div>)}
               </dd>
             </div>
