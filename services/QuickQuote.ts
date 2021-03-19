@@ -39,3 +39,12 @@ const FetchQuickQuotes = async (accessToken: string): Promise<any> => {
 export const useQuickQuotes = (accessToken: string): QueryObserverResult<any, AxiosError> => {
   return useQuery('QuickQuotes', async () => await FetchQuickQuotes(accessToken), { refetchOnMount: false })
 }
+
+export const FetchQuickQuote = async (accessToken: string, quickQuoteId: number): Promise<any> => {
+  const quickQuote = await axios.get(`http://localhost:4000/quickQuote/${quickQuoteId}`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    }
+  })
+  return quickQuote.data
+}
