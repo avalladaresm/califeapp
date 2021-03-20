@@ -30,7 +30,7 @@ const MainContainer = (props) => {
     <div className='flex flex-col place-content-between'>
       <Header collapsed={collapsed} isMobile={_isMobile} onClick={() => setCollapsed(!collapsed)} />
       <Content {...props} collapsed={collapsed}>
-        {collapsed && <Sidebar {...props} onClick={() => setCollapsed(!collapsed)} />}
+        <Sidebar {...props} collapsed={collapsed} onClick={() => setCollapsed(!collapsed)} />
         {props.children}
       </Content>
       {!auth?.a_t && <Footer />}
